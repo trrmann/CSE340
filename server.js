@@ -15,17 +15,27 @@ const app = express();
  * Configure Express middleware.
  */
 app.use(express.static(path.join(__dirname, 'public')));
+// Set EJS as the templating engine
+app.set('view engine', 'ejs');
+// Tell Express where to find your templates
+app.set('views', path.join(__dirname, 'src/views'));
 /** 
   * Define routes for the application
   */
 app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, 'src/views/home.html'));
+  const title = "Home";
+  //res.sendFile(path.join(__dirname, 'src/views/home.html'));
+  res.render('home', { title });
 });
 app.get('/organizations', (req, res) => {
-  res.sendFile(path.join(__dirname, 'src/views/organizations.html'));
+  const title = "Organizations";
+  //res.sendFile(path.join(__dirname, 'src/views/organizations.html'));
+  res.render('organizations', { title });
 });
 app.get('/projects', (req, res) => {
-  res.sendFile(path.join(__dirname, 'src/views/project.html'));
+  const title = "Projects";
+  //res.sendFile(path.join(__dirname, 'src/views/project.html'));
+  res.render('project', { title });
 }); 
 /*
 app.get('/', (req, res) => {

@@ -1,15 +1,25 @@
 <%- include('partials/header') %>
-<main>
-  <h1><%= title %></h1>
-  <h2>Upcoming Service Projects</h2>
-  <ul>
-    <li>
-      Park Cleanup - Join us to clean up local parks and make them beautiful!
-    </li>
-    <li>Food Drive - Help collect and distribute food to those in need.</li>
-    <li>
-      Community Tutoring - Volunteer to tutor students in various subjects.
-    </li>
-  </ul>
+<main class="content-split">
+  <section class="intro-block">
+    <h1><%= title %></h1>
+    <h2>Upcoming Service Projects</h2>
+  </section>
+
+  <section class="card-grid vertical-stack">
+    <div class="card interactive-card">
+      <h3>Park Cleanup</h3>
+      <p>Join us to clean up local parks and make them beautiful!</p>
+    </div>
+
+    <div class="card interactive-card">
+      <h3>Food Drive</h3>
+      <p>Help collect and distribute food to those in need.</p>
+    </div>
+
+    <div class="card interactive-card">
+      <h3>Community Tutoring</h3>
+      <p>Volunteer to tutor students in various subjects.</p>
+    </div>
+  </section>
 </main>
 <%- include('partials/footer') %>

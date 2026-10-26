@@ -1,0 +1,92 @@
+/**
+ * core styles - Variables & Global Resets
+ */
+:root {
+  --primary-color: #0f172a;        /* Deep slate text */
+  --secondary-color: #0284c7;      /* Accessible Sky Blue links */
+  --accent-color: #f8fafc;         /* Crisp near-white secondary surfaces */
+  --primary-background: #ffffff;   /* Pure white main canvas */
+  --footer-background: #1e293b;    /* Dark slate contrast footer */
+  --footer-text: #f8fafc;          /* ADDED: Clean, high-contrast AAA footer text */
+  --border-color: #e2e8f0;         /* Soft separation borders */
+  --primary-font: 'Inter', system-ui, -apple-system, Arial, sans-serif;
+  --secondary-font: 'Merriweather', Georgia, serif;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body {
+  background-color: var(--primary-background);
+  color: var(--primary-color);
+  font-family: var(--primary-font);
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+/* Structural Layout Components */
+nav {
+  background-color: var(--accent-color);
+  border-bottom: 1px solid var(--border-color);
+  width: 100%;
+}
+
+  nav li a {
+    color: var(--primary-color);
+    border-right: 1px solid var(--border-color);
+    border-bottom: 1px solid var(--border-color);
+    transition: background-color 0.2s ease;
+    text-decoration: none;
+  }
+
+main {
+  flex: 1;
+  padding: 2rem 1.5rem;
+  width: 100%;
+}
+
+footer {
+  background-color: var(--footer-background);
+  color: var(--footer-text);
+  text-align: center;
+  padding: 1.5rem;
+  margin-top: auto;
+  width: 100%;
+}
+footer p {
+  color: var(--footer-text);
+  margin-bottom: 0;
+}
+
+/* Typography & Imagery */
+h1 {
+  font-family: var(--secondary-font);
+  font-size: 2.25rem;
+  color: var(--primary-color);
+  margin-bottom: 1rem;
+}
+
+h2 {
+  font-weight: 500;
+  font-size: 1.25rem;
+  color: #475569;
+  margin-bottom: 1.5rem;
+}
+
+p {
+  line-height: 1.7;
+  color: #334155;
+  max-width: 75ch; /* Keeps long paragraphs readable */
+  margin-bottom: 2rem;
+}
+
+.main-logo {
+  max-width: 100%;
+  height: auto;
+  border-radius: 8px;
+  display: block;
+}

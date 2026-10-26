@@ -1,20 +1,30 @@
 <%- include('partials/header') %>
-<main>
-  <h1><%= title %></h1>
-  <p>Here are a few of our service project categories:</p>
-  <ul>
-    <li>
-      <strong>Environmental</strong>: placeholder
-    </li>
-    <li>
-      <strong>Educational</strong>: placeholder
-    </li>
-    <li>
-      <strong>Community Service</strong>: placeholder
-    </li>
-    <li>
-      <strong>Health & Wellness</strong>: placeholder
-    </li>
-  </ul>
+<main class="content-split">
+  <section class="intro-block">
+    <h1><%= title %></h1>
+    <p>Here are a few of our service project categories:</p>
+  </section>
+
+  <section class="card-grid">
+    <div class="card category-card">
+      <h3>Environmental</h3>
+      <span class="placeholder-text">Explore green initiatives, community planting, and conservation.</span>
+    </div>
+
+    <div class="card category-card">
+      <h3>Educational</h3>
+      <span class="placeholder-text">Discover tutoring opportunities, literacy programs, and skill workshops.</span>
+    </div>
+
+    <div class="card category-card">
+      <h3>Community Service</h3>
+      <span class="placeholder-text">Support local food banks, shelter outreach, and civic improvements.</span>
+    </div>
+
+    <div class="card category-card">
+      <h3>Health & Wellness</h3>
+      <span class="placeholder-text">Assist in community wellness fairs, active drives, and patient care support.</span>
+    </div>
+  </section>
 </main>
 <%- include('partials/footer') %>

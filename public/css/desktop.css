@@ -1,0 +1,30 @@
+@import url("laptop.css");
+
+/**
+ * desktop styles
+ */
+@media screen and (min-width: 1280px) {
+  main {
+    padding: 4rem 6rem;
+    gap: 5rem;
+  }
+  
+  h1 {
+    font-size: 3.5rem;
+  }
+  .content-split {
+    flex-direction: row;
+    align-items: flex-start;
+  }
+
+  .intro-block {
+    flex: 1;
+    position: sticky;
+    top: 2rem;
+  }
+
+  .card-grid {
+    flex: 2;
+    grid-template-columns: repeat(2, 1fr);
+  }
+}

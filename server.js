@@ -32,6 +32,11 @@ app.get('/organizations', (req, res) => {
   //res.sendFile(path.join(__dirname, 'src/views/organizations.html'));
   res.render('organizations', { title });
 });
+app.get('/categories', (req, res) => {
+  const title = "Categories";
+  //res.sendFile(path.join(__dirname, 'src/views/categories.html'));
+  res.render('categories', { title });
+});
 app.get('/projects', (req, res) => {
   const title = "Projects";
   //res.sendFile(path.join(__dirname, 'src/views/project.html'));

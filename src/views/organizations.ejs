@@ -1,26 +1,34 @@
 <%- include('partials/header') %>
-<main>
-  <h1><%= title %></h1>
-  <p>Here are a few of our partner organizations:</p>
-  <ul>
-    <li>
-      <img
-        src="/images/brightfuture-logo.png"
-        alt="BrightFuture Builders logo"
-      /><strong>BrightFuture Builders</strong>: info@brightfuture.org
-    </li>
-    <li>
-      <img
-        src="/images/greenharvest-logo.png"
-        alt="GreenHarvest Growers logo"
-      /><strong>GreenHarvest Growers</strong>: contact@greenharvest.org
-    </li>
-    <li>
-      <img
-        src="/images/unityserve-logo.png"
-        alt="UnityServe Volunteers logo"
-      /><strong>UnityServe Volunteers</strong>: hello@unityserve.org
-    </li>
-  </ul>
+<main class="content-split">
+  <section class="intro-block">
+    <h1><%= title %></h1>
+    <p>Here are a few of our partner organizations:</p>
+  </section>
+
+  <section class="card-grid">
+    <div class="card">
+      <img src="/images/brightfuture-logo.png" alt="BrightFuture Builders logo" class="card-logo" />
+      <div class="card-body">
+        <strong>BrightFuture Builders</strong>
+        <a href="mailto:info@brightfuture.org" class="contact-link">info@brightfuture.org</a>
+      </div>
+    </div>
+
+    <div class="card">
+      <img src="/images/greenharvest-logo.png" alt="GreenHarvest Growers logo" class="card-logo" />
+      <div class="card-body">
+        <strong>GreenHarvest Growers</strong>
+        <a href="mailto:contact@greenharvest.org" class="contact-link">contact@greenharvest.org</a>
+      </div>
+    </div>
+
+    <div class="card">
+      <img src="/images/unityserve-logo.png" alt="UnityServe Volunteers logo" class="card-logo" />
+      <div class="card-body">
+        <strong>UnityServe Volunteers</strong>
+        <a href="mailto:hello@unityserve.org" class="contact-link">hello@unityserve.org</a>
+      </div>
+    </div>
+  </section>
 </main>
 <%- include('partials/footer') %>

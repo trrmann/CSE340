@@ -1,0 +1,18 @@
+@import url("tablet.css");
+
+/**
+ * laptop styles
+ */
+@media screen and (min-width: 1024px) {
+  main {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 3rem;
+    align-items: center;
+  }
+  
+  .main-logo {
+    grid-column: 2;
+    order: unset;
+  }
+}

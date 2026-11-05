@@ -6,29 +6,16 @@
   </section>
 
   <section class="card-grid">
+    <% organizations.forEach(organization => { %>
     <div class="card">
-      <img src="/images/brightfuture-logo.png" alt="BrightFuture Builders logo" class="card-logo" />
+      <img src="/images/<%= organization.logo_filename %>" alt="<%= organization.name %> logo" class="card-logo" />
       <div class="card-body">
-        <strong>BrightFuture Builders</strong>
-        <a href="mailto:info@brightfuture.org" class="contact-link">info@brightfuture.org</a>
+        <strong><%= organization.name %></strong>
+        <p><%= organization.description %></p>
+        <a href="mailto:<%= organization.contact_email %>" class="contact-link"><%= organization.contact_email %></a>
       </div>
     </div>
-
-    <div class="card">
-      <img src="/images/greenharvest-logo.png" alt="GreenHarvest Growers logo" class="card-logo" />
-      <div class="card-body">
-        <strong>GreenHarvest Growers</strong>
-        <a href="mailto:contact@greenharvest.org" class="contact-link">contact@greenharvest.org</a>
-      </div>
-    </div>
-
-    <div class="card">
-      <img src="/images/unityserve-logo.png" alt="UnityServe Volunteers logo" class="card-logo" />
-      <div class="card-body">
-        <strong>UnityServe Volunteers</strong>
-        <a href="mailto:hello@unityserve.org" class="contact-link">hello@unityserve.org</a>
-      </div>
-    </div>
+    <% }); %>
   </section>
 </main>
 <%- include('partials/footer') %>

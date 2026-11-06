@@ -1,0 +1,1 @@
+SELECT has_schema_privilege($1, $2, 'CREATE') AS has_create;

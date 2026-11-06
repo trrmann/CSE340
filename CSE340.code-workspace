@@ -4,5 +4,15 @@
 			"path": "."
 		}
 	],
-	"settings": {}
+	"settings": {
+		// This project uses PostgreSQL only. Treat every .sql file as Postgres
+		// (language id "postgres" from the ckolkman.vscode-postgres extension) instead of SQL Server T-SQL.
+		"files.associations": {
+			"**/*.sql": "postgres"
+		},
+		// Turn off SQL Server (MSSQL extension) checking in this workspace only.
+		// These are window-scoped settings, so they must live here, not in .vscode/settings.json.
+		"mssql.intelliSense.enableErrorChecking": false,
+		"mssql.intelliSense.enableIntelliSense": false
+	}
 }

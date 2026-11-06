@@ -1,10 +1,10 @@
 import express from 'express';
 import { fileURLToPath } from 'url';
 import path from 'path';
-import { testConnection } from './src/models/db.js';
-import { getAllOrganizations } from './src/models/organizations.js';
-import { getAllProjects } from './src/models/projects.js';
-import { getAllCategories } from './src/models/categories.js';
+import { pgDBConnection } from './src/models/db.js';
+import { OrganizationsModel } from './src/models/organizations.js';
+import { ProjectsModel } from './src/models/projects.js';
+import { CategoriesModel } from './src/models/categories.js';
 
 // Define the application environment.
 const NODE_ENV = process.env.NODE_ENV?.toLocaleLowerCase() || 'production';
@@ -14,6 +14,10 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const app = express();
+const pgDB = new pgDBConnection();
+const organizationsModel = new OrganizationsModel();
+const projectsModel = new ProjectsModel();
+const categoriesModel = new CategoriesModel();
 
 /**
  * Configure Express middleware.
@@ -34,26 +38,26 @@ app.get('/', async (req, res) => {
 });
 
 app.get('/organizations', async (req, res) => {
-  const organizations = await getAllOrganizations();
+  const organizations = await organizationsModel.getAllOrganizations();
   const title = 'Our Partner Organizations';
   res.render('organizations', { title, organizations });
 });
 
 app.get('/categories', async (req, res) => {
-  const categories = await getAllCategories();
+  const categories = await categoriesModel.getAllCategories();
   const title = 'Service Project Categories';
   res.render('categories', { title, categories });
 });
 
 app.get('/projects', async (req, res) => {
-  const projects = await getAllProjects();
+  const projects = await projectsModel.getAllProjects();
   const title = 'Service Projects';
   res.render('projects', { title, projects });
 }); 
 
 app.listen(port, async () => {
   try {
-    await testConnection();
+    await pgDB.testConnection();
     console.log(`Server is running at http://127.0.0.1:${port}`);
     console.log(`Environment: ${NODE_ENV}`);
   } catch (error) {

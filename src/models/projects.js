@@ -1,17 +1,18 @@
-import db from './db.js'
+import { pgDBConnection } from './db.js'
 
-const getAllProjects = async() => {
-    const query = `
-        SELECT p.project_id, p.organization_id, p.title, p.description, p.location, p.project_date,
-               o.name AS organization_name
-      FROM public.project p
-      JOIN public.organization o ON o.organization_id = p.organization_id
-      ORDER BY p.project_date;
-    `;
+class ProjectsModel extends pgDBConnection {
+  constructor() {
+    super('project');
+  }
+  getAllProjects = async() => (await this.query({ querySQLPath: 'getAllProjects.sql' })).rows;
 
-    const result = await db.query(query);
-
-    return result.rows;
 }
 
-export {getAllProjects}
+/**
+ * Function-style alias matching the course assignment's model pattern (getAllProjects()).
+ * Not used by this application (server.js uses ProjectsModel); present only to show the
+ * same functionality in line with the assignment directly.
+ */
+const getAllProjects = () => new ProjectsModel().getAllProjects();
+
+export { ProjectsModel, getAllProjects }

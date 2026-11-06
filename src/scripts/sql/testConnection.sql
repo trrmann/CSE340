@@ -1,0 +1,1 @@
+SELECT NOW() as current_time;

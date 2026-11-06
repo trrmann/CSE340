@@ -1,15 +1,18 @@
-import db from './db.js'
+import { pgDBConnection } from './db.js'
 
-const getAllCategories = async() => {
-    const query = `
-        SELECT category_id, name
-      FROM public.category
-      ORDER BY name;
-    `;
+class CategoriesModel extends pgDBConnection {
+  constructor() {
+    super('category');
+  }
+  getAllCategories = async() => (await this.query({ querySQLPath: 'getAllCategories.sql' })).rows;
 
-    const result = await db.query(query);
-
-    return result.rows;
 }
 
-export {getAllCategories}
+/**
+ * Function-style alias matching the course assignment's model pattern (getAllCategories()).
+ * Not used by this application (server.js uses CategoriesModel); present only to show the
+ * same functionality in line with the assignment directly.
+ */
+const getAllCategories = () => new CategoriesModel().getAllCategories();
+
+export { CategoriesModel, getAllCategories }

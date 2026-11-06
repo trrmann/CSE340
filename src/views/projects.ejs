@@ -1,0 +1,18 @@
+<%- include('partials/header') %>
+<main class="content-split">
+  <section class="intro-block">
+    <h1><%= title %></h1>
+    <h2>Upcoming Service Projects</h2>
+  </section>
+
+  <section class="card-grid vertical-stack">
+    <% projects.forEach(project => { %>
+    <div class="card interactive-card">
+      <h3><%= project.project_date.toLocaleDateString('en-US', { weekday: 'short', year: 'numeric', month: 'long', day: 'numeric' }) %>: <%= project.title %> (<em><%= project.organization_name %></em>)</h3>
+      <p><%= project.description %></p>
+      <p><strong>Location:</strong> <%= project.location %></p>
+    </div>
+    <% }); %>
+  </section>
+</main>
+<%- include('partials/footer') %>

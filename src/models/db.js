@@ -13,7 +13,11 @@ import { Pool } from 'pg';
  */
 const pool = new Pool({
     connectionString: process.env.DB_URL,
-    ssl: true
+    // Render's internal database connection uses a self-signed certificate,
+    // so certificate verification is disabled (connection is still encrypted).
+    ssl: {
+        rejectUnauthorized: false
+    }
 });
 
 /**

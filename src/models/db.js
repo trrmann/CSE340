@@ -11,6 +11,26 @@ import { Pool } from 'pg';
  * The connection string format is:
  * postgresql://username:password@host:port/database
  */
+// TEMP DIAGNOSTIC: show what DB_URL was loaded (password masked). Remove once Render is fixed.
+(() => {
+    const raw = process.env.DB_URL;
+    if (raw === undefined) {
+        console.log('[DB_URL check] DB_URL is NOT SET');
+        return;
+    }
+    console.log('[DB_URL check] length:', raw.length,
+        '| leading/trailing whitespace:', raw !== raw.trim(),
+        '| has quotes:', /["']/.test(raw));
+    try {
+        const u = new URL(raw.trim());
+        console.log('[DB_URL check] protocol:', u.protocol, '| user:', u.username,
+            '| password set:', u.password.length > 0, '| host:', u.hostname,
+            '| port:', u.port || '(default)', '| database:', u.pathname.slice(1));
+    } catch (error) {
+        console.log('[DB_URL check] could not parse as URL:', raw.replace(/:[^:@/]*@/, ':****@'));
+    }
+})();
+
 const pool = new Pool({
     connectionString: process.env.DB_URL,
     ssl: true

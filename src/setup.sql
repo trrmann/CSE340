@@ -7,6 +7,8 @@
 -- -------------------------------------------------------------
 -- Drop existing tables (children first, because of foreign keys)
 -- -------------------------------------------------------------
+DROP TABLE IF EXISTS project_category;
+DROP TABLE IF EXISTS category;
 DROP TABLE IF EXISTS project;
 DROP TABLE IF EXISTS organization;
 
@@ -61,3 +63,60 @@ INSERT INTO project (organization_id, title, description, location, project_date
 ((SELECT organization_id FROM organization WHERE name = 'UnityServe Volunteers'), 'Senior Center Holiday Visit', 'Spend an afternoon playing games and sharing a meal with seniors.', 'Golden Years Senior Center', '2026-12-19'),
 ((SELECT organization_id FROM organization WHERE name = 'UnityServe Volunteers'), 'Literacy Tutoring Night', 'Read with and tutor elementary students working on reading skills.', 'Lincoln Public Library', '2027-01-28'),
 ((SELECT organization_id FROM organization WHERE name = 'UnityServe Volunteers'), 'Park Cleanup Day', 'Pick up litter and clear trails to make local parks beautiful.', 'Riverside Park', '2027-03-20');
+
+-- -------------------------------------------------------------
+-- Categories (W02 Assignment)
+-- A project can belong to many categories and a category can
+-- contain many projects (many-to-many), so a join table is used.
+-- -------------------------------------------------------------
+CREATE TABLE category (
+    category_id SERIAL PRIMARY KEY,
+    name VARCHAR(100) NOT NULL UNIQUE
+);
+
+CREATE TABLE project_category (
+    project_id INTEGER NOT NULL REFERENCES project(project_id) ON DELETE CASCADE,
+    category_id INTEGER NOT NULL REFERENCES category(category_id) ON DELETE CASCADE,
+    PRIMARY KEY (project_id, category_id)
+);
+
+-- The composite primary key already indexes lookups by project_id;
+-- this index speeds up lookups by category_id (e.g. "all projects in a category")
+CREATE INDEX idx_project_category_category_id ON project_category(category_id);
+
+INSERT INTO category (name) VALUES
+('Environmental'),
+('Educational'),
+('Community Service'),
+('Health & Wellness');
+
+-- Associate every project with at least one category
+INSERT INTO project_category (project_id, category_id)
+SELECT p.project_id, c.category_id
+FROM (VALUES
+    ('Fall Garden Cleanup', 'Environmental'),
+    ('Composting Workshop', 'Environmental'),
+    ('Composting Workshop', 'Educational'),
+    ('Greenhouse Seed Starting', 'Environmental'),
+    ('School Garden Build', 'Environmental'),
+    ('School Garden Build', 'Educational'),
+    ('Fresh Produce Market Day', 'Community Service'),
+    ('Fresh Produce Market Day', 'Health & Wellness'),
+    ('Community Center Roof Repair', 'Community Service'),
+    ('Accessible Ramp Build', 'Community Service'),
+    ('Accessible Ramp Build', 'Health & Wellness'),
+    ('Playground Restoration', 'Community Service'),
+    ('Solar Panel Installation Day', 'Environmental'),
+    ('Solar Panel Installation Day', 'Community Service'),
+    ('Habitat Home Framing', 'Community Service'),
+    ('Thanksgiving Food Drive', 'Community Service'),
+    ('Thanksgiving Food Drive', 'Health & Wellness'),
+    ('Winter Coat Collection', 'Community Service'),
+    ('Senior Center Holiday Visit', 'Community Service'),
+    ('Senior Center Holiday Visit', 'Health & Wellness'),
+    ('Literacy Tutoring Night', 'Educational'),
+    ('Park Cleanup Day', 'Environmental'),
+    ('Park Cleanup Day', 'Community Service')
+) AS pc(project_title, category_name)
+JOIN project p ON p.title = pc.project_title
+JOIN category c ON c.name = pc.category_name;

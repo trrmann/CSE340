@@ -15,9 +15,16 @@
   "type": "module",
   "main": "server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "npm run test:db",
+    "test:preview": "node src/scripts/js/modules/tests/preview-tests.mjs",
+    "test:db": "node --env-file=.env src/scripts/js/modules/tests/provisioning-tests.mjs",
     "dev": "nodemon",
-    "start": "node server.js"
+    "start": "node server.js",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "verify": "npm run format && npm run lint"
   },
   "dependencies": {
     "ejs": "^7.0.2",
@@ -25,6 +32,16 @@
     "pg": "^8.23.1"
   },
   "devDependencies": {
-    "nodemon": "^3.1.14"
+    "@eslint/js": "^10.0.1",
+    "axe-core": "^4.14.0",
+    "eslint": "^10.14.0",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-prettier": "^5.5.7",
+    "globals": "^17.14.0",
+    "html-validate": "^11.19.0",
+    "lighthouse": "^13.6.0",
+    "nodemon": "^3.1.14",
+    "prettier": "^3.9.10",
+    "puppeteer": "^25.16.0"
   }
 }

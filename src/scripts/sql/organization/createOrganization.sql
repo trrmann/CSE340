@@ -1,5 +1,4 @@
-DROP TABLE IF EXISTS organization;
-CREATE TABLE organization (
+CREATE TABLE IF NOT EXISTS {{schema}}.organization (
     organization_id SERIAL PRIMARY KEY,
     name VARCHAR(150) NOT NULL,
     description TEXT NOT NULL,

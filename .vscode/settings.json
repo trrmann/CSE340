@@ -1,5 +1,21 @@
 {
     "python.terminal.useEnvFile": true,
+    // Put every script in src/scripts/sh on PATH for the VS Code terminal (as in FlashCards).
+    "terminal.integrated.env.linux": {
+        "PATH": "${workspaceFolder}/src/scripts/sh:${env:PATH}"
+    },
+    "terminal.integrated.env.osx": {
+        "PATH": "${workspaceFolder}/src/scripts/sh:${env:PATH}"
+    },
+    // Project-local terminal: loads ~/.bashrc, then CSE340's scripts and the deploy alias.
+    // See .vscode/terminal-rc.sh (FlashCards uses the same pattern for its own terminals).
+    "terminal.integrated.profiles.linux": {
+        "CSE340 bash": {
+            "path": "bash",
+            "args": ["--rcfile", "${workspaceFolder}/.vscode/terminal-rc.sh"]
+        }
+    },
+    "terminal.integrated.defaultProfile.linux": "CSE340 bash",
     // Same SQL settings as CSE340.code-workspace, for when the folder is opened directly
     // instead of through the workspace file. This project uses PostgreSQL only.
     "files.associations": {

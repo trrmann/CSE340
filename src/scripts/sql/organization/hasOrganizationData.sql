@@ -1,0 +1,1 @@
+SELECT EXISTS (SELECT 1 FROM {{schema}}.organization) AS has_data;

@@ -1,4 +1,4 @@
-@import url("core.css");
+@import url('core.css');
 
 /**
  * mobile styles (Default Layout)
@@ -9,7 +9,7 @@ nav ul {
   flex-direction: column;
 }
 
-  nav li a {
+nav li a {
   display: block;
   padding: 1rem 1.5rem;
   font-weight: 600;
@@ -19,7 +19,6 @@ nav li a:hover {
   background-color: var(--border-color);
   color: var(--secondary-color);
 }
-
 
 /* Card Container Grid Layouts */
 .content-split {
@@ -44,7 +43,7 @@ nav li a:hover {
   display: flex;
   flex-direction: column;
   gap: 1rem;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
 }
 
 .card-logo {

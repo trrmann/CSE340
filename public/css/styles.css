@@ -1,4 +1,4 @@
-@import url("desktop.css");
+@import url('desktop.css');
 
 /**
  * big screen styles
@@ -6,19 +6,19 @@
 @media screen and (min-width: 1920px) {
   /* Remove layout width limits to claim massive canvas fields */
   main {
-    grid-template-columns: 1.5fr 1fr 1fr; 
+    grid-template-columns: 1.5fr 1fr 1fr;
     gap: 6rem;
     padding: 5rem 8rem;
   }
-  
+
   h1 {
     font-size: 4.5rem;
   }
-  
+
   h2 {
     font-size: 1.75rem;
   }
-  
+
   p {
     font-size: 1.25rem;
     max-width: 80ch;

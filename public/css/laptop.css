@@ -1,4 +1,4 @@
-@import url("tablet.css");
+@import url('tablet.css');
 
 /**
  * laptop styles
@@ -10,7 +10,7 @@
     gap: 3rem;
     align-items: center;
   }
-  
+
   .main-logo {
     grid-column: 2;
     order: unset;

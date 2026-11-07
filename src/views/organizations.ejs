@@ -6,16 +6,16 @@
   </section>
 
   <section class="card-grid">
-    <% organizations.forEach(organization => { %>
+    <%_ organizations.forEach(organization => { _%>
     <div class="card">
-      <img src="/images/<%= organization.logo_filename %>" alt="<%= organization.name %> logo" class="card-logo" />
+      <img src="/images/<%= organization.logo_filename %>" alt="<%= organization.name %> logo" class="card-logo">
       <div class="card-body">
         <strong><%= organization.name %></strong>
         <p><%= organization.description %></p>
         <a href="mailto:<%= organization.contact_email %>" class="contact-link"><%= organization.contact_email %></a>
       </div>
     </div>
-    <% }); %>
+    <%_ }); _%>
   </section>
 </main>
 <%- include('partials/footer') %>

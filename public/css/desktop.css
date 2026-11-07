@@ -1,4 +1,4 @@
-@import url("laptop.css");
+@import url('laptop.css');
 
 /**
  * desktop styles
@@ -8,7 +8,7 @@
     padding: 4rem 6rem;
     gap: 5rem;
   }
-  
+
   h1 {
     font-size: 3.5rem;
   }

@@ -1,3 +1,8 @@
-
 node_modules/
 .env
+.env.backup
+.env.example
+.deployment/
+.deployment/last-run.log
+
+.claude/settings.local.json

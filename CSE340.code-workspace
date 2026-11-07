@@ -1,18 +1,34 @@
 {
-	"folders": [
-		{
-			"path": "."
-		}
-	],
-	"settings": {
-		// This project uses PostgreSQL only. Treat every .sql file as Postgres
-		// (language id "postgres" from the ckolkman.vscode-postgres extension) instead of SQL Server T-SQL.
-		"files.associations": {
-			"**/*.sql": "postgres"
-		},
-		// Turn off SQL Server (MSSQL extension) checking in this workspace only.
-		// These are window-scoped settings, so they must live here, not in .vscode/settings.json.
-		"mssql.intelliSense.enableErrorChecking": false,
-		"mssql.intelliSense.enableIntelliSense": false
-	}
+  "folders": [
+    {
+      "path": ".",
+    },
+  ],
+  "settings": {
+    // Put every script in src/scripts/sh on PATH for the VS Code terminal (as in FlashCards).
+    "terminal.integrated.env.linux": {
+      "PATH": "${workspaceFolder}/src/scripts/sh:${env:PATH}",
+    },
+    "terminal.integrated.env.osx": {
+      "PATH": "${workspaceFolder}/src/scripts/sh:${env:PATH}",
+    },
+    // Project-local terminal: loads ~/.bashrc, then CSE340's scripts and the deploy alias.
+    // See .vscode/terminal-rc.sh (FlashCards uses the same pattern for its own terminals).
+    "terminal.integrated.profiles.linux": {
+      "CSE340 bash": {
+        "path": "bash",
+        "args": ["--rcfile", "${workspaceFolder}/.vscode/terminal-rc.sh"],
+      },
+    },
+    "terminal.integrated.defaultProfile.linux": "CSE340 bash",
+    // This project uses PostgreSQL only. Treat every .sql file as Postgres
+    // (language id "postgres" from the ckolkman.vscode-postgres extension) instead of SQL Server T-SQL.
+    "files.associations": {
+      "**/*.sql": "postgres",
+    },
+    // Turn off SQL Server (MSSQL extension) checking in this workspace only.
+    // These are window-scoped settings, so they must live here, not in .vscode/settings.json.
+    "mssql.intelliSense.enableErrorChecking": false,
+    "mssql.intelliSense.enableIntelliSense": false,
+  },
 }

@@ -1,4 +1,4 @@
-@import url("mobile.css");
+@import url('mobile.css');
 
 /**
  * tablet styles
@@ -13,14 +13,14 @@
     border-bottom: none;
     padding: 1.25rem 2rem;
   }
-  
+
   main {
     padding: 3rem 4rem;
   }
   .card-grid {
     grid-template-columns: repeat(2, 1fr);
   }
-  
+
   .card-grid.vertical-stack {
     grid-template-columns: 1fr;
   }

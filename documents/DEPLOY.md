@@ -102,6 +102,17 @@ dropped afterwards (also when a test fails). The app's own schema is never touch
 `version` is the deployed commit (`RENDER_GIT_COMMIT`, set by Render; `null` locally). `release.sh` waits for it to
 match the pushed commit.
 
+## Render environment settings
+
+This project includes its own Render API helper; see [RENDER_ENV.md](./RENDER_ENV.md) for all commands. Keep the token
+in the Git-ignored `.env` as `RENDER_API_KEY=...`; the local `render-env.sh` wrapper loads it without printing it.
+
+```bash
+npm run render:env -- check
+npm run render:env -- list
+npm run render:env -- set --key KEY --value VALUE
+```
+
 ## Read-only checks
 
 ```bash

@@ -24,7 +24,10 @@
     "format:check": "prettier --check .",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
-    "verify": "npm run format && npm run lint"
+    "verify": "npm run format && npm run lint",
+    "render:env": "bash src/scripts/sh/render-env.sh",
+    "render:setup": "bash src/scripts/sh/render-setup.sh",
+    "test:render-env": "node --test src/scripts/js/modules/tests/renderEnvTest.mjs"
   },
   "dependencies": {
     "ejs": "^7.0.2",

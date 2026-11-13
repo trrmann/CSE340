@@ -110,9 +110,35 @@ a.card-link::after {
   inset: 0;
 }
 
-.card .contact-link {
+/* Other links inside a clickable card stay clickable on their own */
+.card a:not(.card-link) {
   position: relative;
   z-index: 1;
+}
+
+/* Category tags (project details page) */
+.tag-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.tag {
+  display: inline-block;
+  padding: 0.25rem 0.75rem;
+  border: 1px solid var(--border-color);
+  border-radius: 999px;
+  color: inherit;
+  text-decoration: none;
+  font-size: 0.9rem;
+}
+
+.tag:hover,
+.tag:focus-visible {
+  background-color: var(--accent-color);
 }
 
 .card:has(a.card-link:hover),

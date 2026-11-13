@@ -20,9 +20,10 @@ class Router extends express.Router {
   initializeRoutes() {
     this.get('/', Router.#homeController.showHomePage);
     this.get('/organizations', Router.#organizationsController.showOrganizationsPage);
-    this.get('/organizations/:id', Router.#organizationsController.showOrganizationDetailsPage);
+    this.get('/organization/:id', Router.#organizationsController.showOrganizationDetailsPage);
     this.get('/categories', Router.#categoriesController.showCategoriesPage);
     this.get('/projects', Router.#projectsController.showProjectsPage);
+    this.get('/project/:id', Router.#projectsController.showProjectDetailsPage);
 
     // error handling routes
     this.get('/test-error', Router.#errorController.throwError500);

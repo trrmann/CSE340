@@ -1,0 +1,21 @@
+<%- include('partials/header') %>
+<main class="content-split">
+  <section class="intro-block">
+    <h1><%= project.title %></h1>
+    <p>
+      Sponsored by
+      <a href="/organization/<%= project.organization_id %>"><%= project.organization_name %></a>
+    </p>
+  </section>
+  <section class="projects-column">
+    <div class="card">
+      <p>
+        <strong>Date:</strong> <%= project.project_date.toLocaleDateString('en-US', { weekday:
+        'long', year: 'numeric', month: 'long', day: 'numeric' }) %>
+      </p>
+      <p><strong>Location:</strong> <%= project.location %></p>
+      <p><%= project.description %></p>
+    </div>
+  </section>
+</main>
+<%- include('partials/footer') %>

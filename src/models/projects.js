@@ -18,6 +18,15 @@ class ProjectsModel extends PgDBConnection {
       })
     ).rows;
   }
+  async getUpcomingProjects(numberOfProjects) {
+    return (
+      await this.query({ querySQLPath: 'getUpcomingProjects.sql', params: [numberOfProjects] })
+    ).rows;
+  }
+  async getProjectDetails(projectId) {
+    const result = await this.query({ querySQLPath: 'getProjectDetails.sql', params: [projectId] });
+    return result.rows.length > 0 ? result.rows[0] : null;
+  }
   async count() {
     return Number((await this.executeQuery({ querySQLPath: 'countProject.sql' })).rows[0].count);
   }
@@ -60,5 +69,14 @@ PgDBConnection.registerProvisioner(2, ProjectsModel);
 const getAllProjects = () => new ProjectsModel().getAllProjects();
 const getProjectsByOrganizationId = (organizationId) =>
   new ProjectsModel().getProjectsByOrganizationId(organizationId);
+const getUpcomingProjects = (numberOfProjects) =>
+  new ProjectsModel().getUpcomingProjects(numberOfProjects);
+const getProjectDetails = (projectId) => new ProjectsModel().getProjectDetails(projectId);
 
-export { ProjectsModel, getAllProjects, getProjectsByOrganizationId };
+export {
+  ProjectsModel,
+  getAllProjects,
+  getProjectsByOrganizationId,
+  getUpcomingProjects,
+  getProjectDetails,
+};

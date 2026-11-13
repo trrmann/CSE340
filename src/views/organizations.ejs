@@ -10,7 +10,7 @@
     <div class="card">
       <img src="/images/<%= organization.logo_filename %>" alt="<%= organization.name %> logo" class="card-logo">
       <div class="card-body">
-        <strong><a class="card-link" href="/organizations/<%= organization.organization_id %>"><%= organization.name %></a></strong>
+        <strong><a class="card-link" href="/organization/<%= organization.organization_id %>"><%= organization.name %></a></strong>
         <p><%= organization.description %></p>
       </div>
       <a href="mailto:<%= organization.contact_email %>" class="contact-link"><%= organization.contact_email %></a>

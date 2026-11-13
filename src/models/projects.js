@@ -10,6 +10,14 @@ class ProjectsModel extends PgDBConnection {
   async getAllProjects() {
     return (await this.query({ querySQLPath: 'getAllProjects.sql' })).rows;
   }
+  async getProjectsByOrganizationId(organizationId) {
+    return (
+      await this.query({
+        querySQLPath: 'getProjectsByOrganizationId.sql',
+        params: [organizationId],
+      })
+    ).rows;
+  }
   async count() {
     return Number((await this.executeQuery({ querySQLPath: 'countProject.sql' })).rows[0].count);
   }
@@ -50,5 +58,7 @@ PgDBConnection.registerProvisioner(2, ProjectsModel);
  * same functionality in line with the assignment directly.
  */
 const getAllProjects = () => new ProjectsModel().getAllProjects();
+const getProjectsByOrganizationId = (organizationId) =>
+  new ProjectsModel().getProjectsByOrganizationId(organizationId);
 
-export { ProjectsModel, getAllProjects };
+export { ProjectsModel, getAllProjects, getProjectsByOrganizationId };

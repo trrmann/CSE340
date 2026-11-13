@@ -58,7 +58,7 @@ app.use((req, res, next) => {
   next(err);
 });
 // global error handler
-app.use((err, req, res, next) => {
+app.use((err, req, res, _next) => {
   // Log error details for debugging.
   console.error('Error occurred:', err.message);
   console.error('Stack trace::', err.stack);

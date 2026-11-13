@@ -408,19 +408,16 @@ class PgDBConnection {
    * @param {boolean} [options.root=false]  true: relative to src/scripts/sql/; false: relative to this model's folder
    * @param {object}  [options.replacements={}]  template tokens to replace (see Path rules above);
    *                                             {{schema}} is added automatically from DB_SCHEMA
-   * @param {Array}   [options.parameters=[]]    values for $1, $2, ... placeholders
+   * @param {Array}   [options.params=[]]    values for $1, $2, ... placeholders
    * @returns {Promise<object>} the pg Result (use .rows for the data)
    */
-  async executeQuery({ querySQLPath, root = false, replacements = {}, parameters = [] }) {
+  async executeQuery({ querySQLPath, root = false, replacements = {}, params = [] }) {
     // Default {{schema}} first, so a caller's own '{{schema}}' replacement still wins.
     const allReplacements = { '{{schema}}': { value: PgDBConnection.#dbSchema }, ...replacements };
     if (root) {
-      return this.db.query(
-        PgDBConnection.loadSQLTemplate(querySQLPath, allReplacements),
-        parameters
-      );
+      return this.db.query(PgDBConnection.loadSQLTemplate(querySQLPath, allReplacements), params);
     } else {
-      return this.db.query(this.loadModelSQLTemplate(querySQLPath, allReplacements), parameters);
+      return this.db.query(this.loadModelSQLTemplate(querySQLPath, allReplacements), params);
     }
   }
   /**
@@ -466,7 +463,7 @@ class PgDBConnection {
       await this.executeQuery({
         querySQLPath: 'schemaExists.sql',
         root: true,
-        parameters: [PgDBConnection.#dbSchema],
+        params: [PgDBConnection.#dbSchema],
       })
     ).rows[0].schema_exists;
   }
@@ -490,7 +487,7 @@ class PgDBConnection {
       await this.executeQuery({
         querySQLPath: 'tableExists.sql',
         root: true,
-        parameters: [PgDBConnection.#dbSchema, tableName],
+        params: [PgDBConnection.#dbSchema, tableName],
       })
     ).rows[0].table_exists;
   }
@@ -510,7 +507,7 @@ class PgDBConnection {
       await this.executeQuery({
         querySQLPath: 'grants/userHasSchemaUsage.sql',
         root: true,
-        parameters: [await this.currentUser(), PgDBConnection.#dbSchema],
+        params: [await this.currentUser(), PgDBConnection.#dbSchema],
       })
     ).rows[0].has_usage;
   }
@@ -540,7 +537,7 @@ class PgDBConnection {
       await this.executeQuery({
         querySQLPath: 'grants/userHasSchemaCreate.sql',
         root: true,
-        parameters: [await this.currentUser(), PgDBConnection.#dbSchema],
+        params: [await this.currentUser(), PgDBConnection.#dbSchema],
       })
     ).rows[0].has_create;
   }

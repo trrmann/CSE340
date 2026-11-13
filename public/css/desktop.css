@@ -27,4 +27,7 @@
     flex: 2;
     grid-template-columns: repeat(2, 1fr);
   }
+  .projects-column {
+    flex: 2;
+  }
 }

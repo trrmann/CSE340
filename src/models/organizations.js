@@ -10,6 +10,13 @@ class OrganizationsModel extends PgDBConnection {
   async getAllOrganization() {
     return (await this.query({ querySQLPath: 'getAllOrganization.sql' })).rows;
   }
+  async getOrganizationDetails(organizationId) {
+    const result = await this.query({
+      querySQLPath: 'getOrganizationDetails.sql',
+      params: [organizationId],
+    });
+    return result.rows.length > 0 ? result.rows[0] : null;
+  }
   async count() {
     return Number(
       (await this.executeQuery({ querySQLPath: 'countOrganization.sql' })).rows[0].count
@@ -52,5 +59,7 @@ PgDBConnection.registerProvisioner(1, OrganizationsModel);
  * same functionality in line with the assignment directly.
  */
 const getAllOrganizations = () => new OrganizationsModel().getAllOrganization();
+const getOrganizationDetails = (organizationId) =>
+  new OrganizationsModel().getOrganizationDetails(organizationId);
 
-export { OrganizationsModel, getAllOrganizations };
+export { OrganizationsModel, getAllOrganizations, getOrganizationDetails };

@@ -2,12 +2,10 @@ import express from 'express';
 import { fileURLToPath } from 'url';
 import path from 'path';
 import { PgDBConnection } from './src/models/db.js';
-import { OrganizationsModel } from './src/models/organizations.js';
-import { ProjectsModel } from './src/models/projects.js';
-import { CategoriesModel } from './src/models/categories.js';
 // Imported for its side effect: registers the project_category join table for provisioning.
 // Every model must be imported before the first query, or provisioning will skip its table.
 import './src/models/projectCategories.js';
+import { Router } from './src/routes.js';
 
 // Define the application environment.
 const NODE_ENV = process.env.NODE_ENV?.toLocaleLowerCase() || 'production';
@@ -18,9 +16,6 @@ const __dirname = path.dirname(__filename);
 
 const app = express();
 const pgDB = new PgDBConnection();
-const organizationsModel = new OrganizationsModel();
-const projectsModel = new ProjectsModel();
-const categoriesModel = new CategoriesModel();
 
 /**
  * Configure Express middleware.
@@ -31,32 +26,23 @@ app.set('view engine', 'ejs');
 // Tell Express where to find your templates
 app.set('views', path.join(__dirname, 'src/views'));
 
+// Middleware to log all incoming requests
+app.use((req, res, next) => {
+  if (NODE_ENV === 'development') {
+    console.log(`${req.method} ${req.url}`);
+  }
+  next();
+});
+// Middleware to make NODE_ENV available to all templates
+app.use((req, res, next) => {
+  res.locals.NODE_ENV = NODE_ENV;
+  next();
+});
+
 /**
- * Define routes for the application
- * (Fixed: Added 'async' to every route handler arrow function)
+ * Use the imported router to handle the routes.
  */
-app.get('/', async (_req, res) => {
-  const title = 'Home';
-  res.render('home', { title });
-});
-
-app.get('/organizations', async (_req, res) => {
-  const organizations = await organizationsModel.getAllOrganization();
-  const title = 'Our Partner Organizations';
-  res.render('organizations', { title, organizations });
-});
-
-app.get('/categories', async (_req, res) => {
-  const categories = await categoriesModel.getAllCategories();
-  const title = 'Service Project Categories';
-  res.render('categories', { title, categories });
-});
-
-app.get('/projects', async (_req, res) => {
-  const projects = await projectsModel.getAllProjects();
-  const title = 'Service Projects';
-  res.render('projects', { title, projects });
-});
+app.use(new Router());
 
 // Health check: 200 once the database is provisioned and reachable, 503 until then (or on failure).
 // `version` is the deployed commit (Render sets RENDER_GIT_COMMIT), so release.sh can tell when
@@ -65,7 +51,32 @@ app.get('/api/health', async (_req, res) => {
   const health = await PgDBConnection.healthCheck();
   res.status(health.status === 'healthy' ? 200 : 503).json(health);
 });
+// catch-all route for 404 errors
+app.use((req, res, next) => {
+  const err = new Error('Page Not Found');
+  err.status = 404;
+  next(err);
+});
+// global error handler
+app.use((err, req, res, next) => {
+  // Log error details for debugging.
+  console.error('Error occurred:', err.message);
+  console.error('Stack trace::', err.stack);
 
+  // Determine the status and template
+  const status = err.status || 500;
+  const template = status === 404 ? '404' : '500';
+
+  // Prepare data for the template
+  const context = {
+    title: status === 404 ? 'Page Not Found' : 'Server Error',
+    error: err.message,
+    stack: err.stack,
+  };
+
+  // Render the appropriate error page
+  res.status(status).render(`errors/${template}`, context);
+});
 app.listen(port, async () => {
   try {
     await pgDB.testConnection();

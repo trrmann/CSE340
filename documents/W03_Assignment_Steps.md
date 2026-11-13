@@ -476,10 +476,10 @@ X**Check:**
 
 - [X] **4.2** `npm run verify` passes (format + lint).
 - [X] **4.3** `deploy.sh -preview` passes (preview tests + database tests).
-- [ ] **4.4** Commit on a branch, then `release.sh cse340 <branch>`.
-- [ ] **4.5** On the live site, repeat the Part 2 and Part 3 checks.
-- [ ] **4.6** Canvas: **W03 Assignment**: submit `https://github.com/trrmann/CSE340` and
+- [X] **4.4** Commit on a branch, then release.sh cs`e340 <branch>`.
+- [X] **4.5** On the live site, repeat the Part 2 and Part 3 checks.
+- [X] **4.6** Canvas: **W03 Assignment**: submit `https://github.com/trrmann/CSE340` and
       `https://cse340-qdjd.onrender.com`.
 - [X] **4.7** Canvas: **W03 Learning Activities quiz** and **W03 Team Activity quiz** (late; no AI).
-- [ ] **4.8** **W03 Coaching Session** (models, views, controllers, error handling), then upload the transcript.
-- [ ] **4.9** **W03 60-second Status Update**.
+- [X] **4.8** **W03 Coaching Session** (models, views, controllers, error handling), then upload the transcript.
+- [X] **4.9** **W03 60-second Status Update**.

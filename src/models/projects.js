@@ -27,6 +27,10 @@ class ProjectsModel extends PgDBConnection {
     const result = await this.query({ querySQLPath: 'getProjectDetails.sql', params: [projectId] });
     return result.rows.length > 0 ? result.rows[0] : null;
   }
+  async getProjectsByCategoryId(categoryId) {
+    return (await this.query({ querySQLPath: 'getProjectsByCategoryId.sql', params: [categoryId] }))
+      .rows;
+  }
   async count() {
     return Number((await this.executeQuery({ querySQLPath: 'countProject.sql' })).rows[0].count);
   }
@@ -72,6 +76,8 @@ const getProjectsByOrganizationId = (organizationId) =>
 const getUpcomingProjects = (numberOfProjects) =>
   new ProjectsModel().getUpcomingProjects(numberOfProjects);
 const getProjectDetails = (projectId) => new ProjectsModel().getProjectDetails(projectId);
+const getProjectsByCategoryId = (categoryId) =>
+  new ProjectsModel().getProjectsByCategoryId(categoryId);
 
 export {
   ProjectsModel,
@@ -79,4 +85,5 @@ export {
   getProjectsByOrganizationId,
   getUpcomingProjects,
   getProjectDetails,
+  getProjectsByCategoryId,
 };

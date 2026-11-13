@@ -1,9 +1,11 @@
 import { ProjectsModel } from '../models/projects.js';
+import { CategoriesModel } from '../models/categories.js';
 
 const NUMBER_OF_UPCOMING_PROJECTS = 5;
 
 class ProjectsController {
   static #projectsModel = new ProjectsModel();
+  static #categoriesModel = new CategoriesModel();
   constructor() {}
 
   /** A 404 error for the global error handler. */
@@ -30,8 +32,10 @@ class ProjectsController {
     if (!project) {
       return next(ProjectsController.notFound('Project Not Found'));
     }
+    const categories =
+      await ProjectsController.#categoriesModel.getCategoriesByProjectId(projectId);
     const title = project.title;
-    res.render('project', { title, project });
+    res.render('project', { title, project, categories });
   };
 }
 

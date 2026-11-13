@@ -10,6 +10,17 @@ class CategoriesModel extends PgDBConnection {
   async getAllCategories() {
     return (await this.query({ querySQLPath: 'getAllCategories.sql' })).rows;
   }
+  async getCategoryDetails(categoryId) {
+    const result = await this.query({
+      querySQLPath: 'getCategoryDetails.sql',
+      params: [categoryId],
+    });
+    return result.rows.length > 0 ? result.rows[0] : null;
+  }
+  async getCategoriesByProjectId(projectId) {
+    return (await this.query({ querySQLPath: 'getCategoriesByProjectId.sql', params: [projectId] }))
+      .rows;
+  }
   async count() {
     return Number((await this.executeQuery({ querySQLPath: 'countCategory.sql' })).rows[0].count);
   }
@@ -50,5 +61,8 @@ PgDBConnection.registerProvisioner(3, CategoriesModel);
  * same functionality in line with the assignment directly.
  */
 const getAllCategories = () => new CategoriesModel().getAllCategories();
+const getCategoryDetails = (categoryId) => new CategoriesModel().getCategoryDetails(categoryId);
+const getCategoriesByProjectId = (projectId) =>
+  new CategoriesModel().getCategoriesByProjectId(projectId);
 
-export { CategoriesModel, getAllCategories };
+export { CategoriesModel, getAllCategories, getCategoryDetails, getCategoriesByProjectId };

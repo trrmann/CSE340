@@ -22,6 +22,7 @@ class Router extends express.Router {
     this.get('/organizations', Router.#organizationsController.showOrganizationsPage);
     this.get('/organization/:id', Router.#organizationsController.showOrganizationDetailsPage);
     this.get('/categories', Router.#categoriesController.showCategoriesPage);
+    this.get('/category/:id', Router.#categoriesController.showCategoryDetailsPage);
     this.get('/projects', Router.#projectsController.showProjectsPage);
     this.get('/project/:id', Router.#projectsController.showProjectDetailsPage);
 

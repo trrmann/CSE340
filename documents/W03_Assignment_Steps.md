@@ -187,7 +187,7 @@ export { ProjectsController };
 this.get('/project/:id', Router.#projectsController.showProjectDetailsPage);
 ```
 
-- [ ] **2.7** New file `src/views/project.ejs`:
+- [X] **2.7** New file `src/views/project.ejs`:
 
 ```html
 <%- include('partials/header') %>

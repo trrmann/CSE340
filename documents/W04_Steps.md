@@ -41,19 +41,19 @@ Implemented in your new folder structure (`src/scripts/js/modules/`) and verifie
 
 ## Part 0: Setup (packages, placeholder logo, session secret)
 
-- [ ] **0.1** In the project folder:
+- [x] **0.1** In the project folder:
 
 ```bash
 npm install express-session express-validator
 ```
 
-- [ ] **0.2** Placeholder logo for new organizations:
+- [x] **0.2** Placeholder logo for new organizations:
 
 ```bash
 curl -o public/images/placeholder-logo.png https://byui-cse.github.io/cse340-ww-course-v2/images/week01/site-images/placeholder-logo.png
 ```
 
-- [ ] **0.3** Generate a session secret and add it to `.env`:
+- [x] **0.3** Generate a session secret and add it to `.env`:
 
 ```bash
 node -e "console.log(require('crypto').randomBytes(64).toString('hex'))"
@@ -61,14 +61,14 @@ node -e "console.log(require('crypto').randomBytes(64).toString('hex'))"
 
 Add the line `SESSION_SECRET=<the printed value>` to `.env`.
 
-- [ ] **0.4** **Render:** web service → **Environment** → add `SESSION_SECRET` with **a different** generated value →
+- [x] **0.4** **Render:** web service → **Environment** → add `SESSION_SECRET` with **a different** generated value →
       Save. (Without it, production sessions and flash messages won't work.)
 
 ---
 
 ## Part 1: Forms, sessions, flash messages (shared plumbing)
 
-- [ ] **1.1** New file `src/scripts/js/modules/library/flash.mjs`:
+- [x] **1.1** New file `src/scripts/js/modules/library/flash.mjs`:
 
 ```js
 /**
@@ -109,7 +109,7 @@ class FlashMessages {
 export { FlashMessages };
 ```
 
-- [ ] **1.2** `src/scripts/js/modules/app.mjs`: add these imports with the other imports at the top:
+- [x] **1.2** `src/scripts/js/modules/app.mjs`: add these imports with the other imports at the top:
 
 ```js
 import session from 'express-session';
@@ -135,7 +135,7 @@ this.app.use(
 this.app.use(FlashMessages.middleware);
 ```
 
-- [ ] **1.3** `src/scripts/js/modules/library/baseController.mjs`: add form-validation support for every controller. Add this import
+- [x] **1.3** `src/scripts/js/modules/library/baseController.mjs`: add form-validation support for every controller. Add this import
       at the top:
 
 ```js
@@ -153,7 +153,7 @@ and add this method **inside the class**, after `notFound(...)`:
   }
 ```
 
-- [ ] **1.4** `src/views/partials/header.ejs`: directly **after** the line `</nav>`, add:
+- [x] **1.4** `src/views/partials/header.ejs`: directly **after** the line `</nav>`, add:
 
 ```html
 <%_ const messages = flash(); _%> <%_ Object.keys(messages).forEach(type => { _%> <%_ if
@@ -166,7 +166,7 @@ and add this method **inside the class**, after `notFound(...)`:
 <%_ } _%> <%_ }); _%>
 ```
 
-- [ ] **1.5** `public/css/core.css`: add at the end:
+- [x] **1.5** `public/css/core.css`: add at the end:
 
 ```css
 /* Forms */
@@ -225,13 +225,13 @@ and add this method **inside the class**, after `notFound(...)`:
 }
 ```
 
-**Check:** every existing page still loads (the header now calls `flash()`, which needs Part 1.3).
+X **Check:** every existing page still loads (the header now calls `flash()`, which needs Part 1.3).
 
 ---
 
 ## Part 2: Create + edit organizations (learning activities: forms, sessions, validation, update)
 
-- [ ] **2.1** New file `src/scripts/sql/organization/insertOrganization.sql`:
+- [x] **2.1** New file `src/scripts/sql/organization/insertOrganization.sql`:
 
 ```sql
 INSERT INTO {{schema}}.organization (name, description, contact_email, logo_filename)
@@ -239,7 +239,7 @@ VALUES ($1, $2, $3, $4)
 RETURNING organization_id;
 ```
 
-- [ ] **2.2** New file `src/scripts/sql/organization/updateOrganization.sql`:
+- [x] **2.2** New file `src/scripts/sql/organization/updateOrganization.sql`:
 
 ```sql
 UPDATE {{schema}}.organization
@@ -248,7 +248,7 @@ WHERE organization_id = $5
 RETURNING organization_id;
 ```
 
-- [ ] **2.3** `src/scripts/js/modules/models/organizations.mjs`: add **inside the class**, after `getOrganizationDetails(...)`:
+- [x] **2.3** `src/scripts/js/modules/models/organizations.mjs`: add **inside the class**, after `getOrganizationDetails(...)`:
 
 ```js
   async createOrganization(name, description, contactEmail, logoFilename) {
@@ -273,7 +273,7 @@ RETURNING organization_id;
   }
 ```
 
-- [ ] **2.4** `src/scripts/js/modules/models/organizations.mjs`: add aliases above the `export` line and replace the `export` line:
+- [x] **2.4** `src/scripts/js/modules/models/organizations.mjs`: add aliases above the `export` line and replace the `export` line:
 
 ```js
 const createOrganization = (name, description, contactEmail, logoFilename) =>
@@ -296,7 +296,7 @@ export {
 };
 ```
 
-- [ ] **2.5** `src/scripts/js/modules/controllers/organizations.mjs`: replace the **whole file** with:
+- [x] **2.5** `src/scripts/js/modules/controllers/organizations.mjs`: replace the **whole file** with:
 
 ```js
 import { body } from 'express-validator';
@@ -413,7 +413,7 @@ class OrganizationsController extends BaseController {
 export { OrganizationsController };
 ```
 
-- [ ] **2.6** `src/scripts/js/modules/routes.mjs` (it already imports `OrganizationsController`): in `initializeRoutes()`, add right after the `/organization/:id` route:
+- [x] **2.6** `src/scripts/js/modules/routes.mjs` (it already imports `OrganizationsController`): in `initializeRoutes()`, add right after the `/organization/:id` route:
 
 ```js
 this.get('/new-organization', Router.#organizationsController.showNewOrganizationForm);
@@ -430,7 +430,7 @@ this.post(
 );
 ```
 
-- [ ] **2.7** New file `src/views/new-organization.ejs` (client-side validation: `required` + `maxlength`; **no**
+- [x] **2.7** New file `src/views/new-organization.ejs` (client-side validation: `required` + `maxlength`; **no**
       `minlength` on the name, so you can see the server-side check):
 
 ```html
@@ -456,7 +456,7 @@ this.post(
 <%- include('partials/footer') %>
 ```
 
-- [ ] **2.8** New file `src/views/edit-organization.ejs`:
+- [x] **2.8** New file `src/views/edit-organization.ejs`:
 
 ```html
 <%- include('partials/header') %>
@@ -507,19 +507,19 @@ this.post(
 <%- include('partials/footer') %>
 ```
 
-- [ ] **2.9** `src/views/organizations.ejs`: add above the `<section class="card-grid">` line:
+- [x] **2.9** `src/views/organizations.ejs`: add above the `<section class="card-grid">` line:
 
 ```html
 <p><a href="/new-organization">Add a new organization</a></p>
 ```
 
-- [ ] **2.10** `src/views/organization.ejs`: add inside the `intro-block` section, right after the description `<p>`:
+- [x] **2.10** `src/views/organization.ejs`: add inside the `intro-block` section, right after the description `<p>`:
 
 ```html
 <p><a href="/edit-organization/<%= organizationDetails.organization_id %>">Edit Organization</a></p>
 ```
 
-**Check:**
+X **Check:**
 
 - `/organizations` → "Add a new organization" → submit valid data → you land on the new organization's page with a
   green "Organization added successfully!" message (shown once; reload and it's gone).

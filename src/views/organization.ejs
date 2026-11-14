@@ -4,6 +4,7 @@
     <h1><%= organizationDetails.name %></h1>
     <img src="/images/<%= organizationDetails.logo_filename %>" alt="<%= organizationDetails.name %> logo" class="card-logo">
     <p><%= organizationDetails.description %></p>
+    <p><a href="/edit-organization/<%= organizationDetails.organization_id %>">Edit Organization</a></p>
   </section>
   <section class="projects-column">
     <h2>Service Projects</h2>

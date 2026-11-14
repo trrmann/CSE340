@@ -1,3 +1,4 @@
+import { validationResult } from 'express-validator';
 import { HttpError } from './httpError.mjs';
 
 /**
@@ -14,6 +15,13 @@ class BaseController {
   /** A 404 error for the global error handler. */
   notFound(message) {
     return HttpError.notFound(message);
+  }
+
+  /** Flash every validation error from express-validator; returns true when there were errors. */
+  flashErrors(req) {
+    const results = validationResult(req);
+    results.array().forEach((error) => req.flash('error', error.msg));
+    return !results.isEmpty();
   }
 }
 

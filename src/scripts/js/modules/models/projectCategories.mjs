@@ -1,4 +1,4 @@
-import { PgDBConnection } from './db.js';
+import { PgDBConnection } from '../library/db.mjs';
 
 /**
  * Model for the project_category join table (many-to-many: projects <-> categories).

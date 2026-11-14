@@ -5,349 +5,37 @@ Update **Sat Nov 21, 6:59 PM**.
 
 Follows your structure: SQL in `src/scripts/sql/<model>/`, class methods in `src/models/` using
 `this.query({ querySQLPath, params })`, course-named alias exports, controller classes with arrow-function handlers,
-routes in `src/routes.js`, views in `src/views/`. Every SQL statement below was validated against your database.
+routes in `src/scripts/js/modules/routes.mjs`, views in `src/views/`. Every SQL statement below was validated against your database.
 
 **This week adds no tables**, so `src/setup.sql` and provisioning don't change. Your existing table-file names
 (`createOrganization.sql` = CREATE TABLE) stay; the new row-level files are named `insert…sql` / `update…sql`.
 
-Do **Part A first** (W03 improvements), then the parts **in order**; after each, run `npm run dev` and do its **Check**.
+Part A is done; do the parts **in order**; after each, run `npm run dev` and do its **Check**.
 
 ---
 
-## Part A: W03 coaching improvements (do these before W04)
+## Part A: W03 coaching improvements ✅ done
 
-From the W03 coaching session: an `HttpError` class, a shared `BaseController`, models passed into controllers
-(dependency injection), and an `App` class for the server. **Nothing changes for visitors**: same pages, URLs, file
-names and course function names; `server.js` stays the entry point. Do this part on its own branch and release it
-before Part 0, so W04 starts from a working base.
+Implemented in your new folder structure (`src/scripts/js/modules/`) and verified: all pages 200, error pages 404/500, `test:db`
+26/26.
 
-- [ ] **A.1** New file `src/lib/httpError.js`:
+- [x] `library/httpError.mjs`: `HttpError(status, message)`, `HttpError.notFound()`
+- [x] `library/baseController.mjs`: `parseId()`, `notFound()` (Part 1.3 adds `flashErrors()`)
+- [x] `controllers/*.mjs` extend `BaseController` and receive their models through the constructor
+- [x] `app.mjs`: `App` class (`configureViews` → `configureMiddleware` → `configureRoutes` →
+      `configureErrorHandling`, `start()` / `stop()`); `server.js` is the 3-line entry point
 
-```js
-/**
- * An Error that carries an HTTP status for the global error handler.
- *   next(new HttpError(404, 'Category Not Found'))
- */
-class HttpError extends Error {
-  constructor(status, message) {
-    super(message);
-    this.name = 'HttpError';
-    this.status = status;
-  }
+**Layout used by every step below** (all paths relative to the project root):
 
-  static notFound(message = 'Page Not Found') {
-    return new HttpError(404, message);
-  }
-}
-
-export { HttpError };
-```
-
-- [ ] **A.2** New file `src/controllers/baseController.js`:
-
-```js
-import { HttpError } from '../lib/httpError.js';
-
-/**
- * Shared helpers for every controller. Controllers extend this class, so the same rules
- * apply everywhere (for example, what counts as a valid id).
- */
-class BaseController {
-  /** A positive whole-number id from a route parameter, or null if it isn't one. */
-  parseId(value) {
-    const id = Number(value);
-    return Number.isInteger(id) && id > 0 ? id : null;
-  }
-
-  /** A 404 error for the global error handler. */
-  notFound(message) {
-    return HttpError.notFound(message);
-  }
-}
-
-export { BaseController };
-```
-
-- [ ] **A.3** `src/controllers/index.js`: replace the **whole file** with:
-
-```js
-import { BaseController } from './baseController.js';
-
-class HomeController extends BaseController {
-  showHomePage = async (_req, res) => {
-    const title = 'Home';
-    res.render('home', { title });
-  };
-}
-
-export { HomeController };
-```
-
-- [ ] **A.4** `src/controllers/errors.js`: replace the **whole file** with:
-
-```js
-import { BaseController } from './baseController.js';
-import { HttpError } from '../lib/httpError.js';
-
-class ErrorController extends BaseController {
-  throwError500 = async (_req, _res, next) => {
-    next(new HttpError(500, 'This is a test Error'));
-  };
-}
-
-export { ErrorController };
-```
-
-- [ ] **A.5** `src/controllers/organizations.js`: replace the **whole file** with:
-
-```js
-import { BaseController } from './baseController.js';
-import { OrganizationsModel } from '../models/organizations.js';
-import { ProjectsModel } from '../models/projects.js';
-
-class OrganizationsController extends BaseController {
-  /** Models are passed in (tests can pass fakes); the defaults are the real models. */
-  constructor({
-    organizationsModel = new OrganizationsModel(),
-    projectsModel = new ProjectsModel(),
-  } = {}) {
-    super();
-    this.organizationsModel = organizationsModel;
-    this.projectsModel = projectsModel;
-  }
-
-  showOrganizationsPage = async (_req, res) => {
-    const organizations = await this.organizationsModel.getAllOrganization();
-    const title = 'Our Partner Organizations';
-    res.render('organizations', { title, organizations });
-  };
-
-  showOrganizationDetailsPage = async (req, res, next) => {
-    const organizationId = this.parseId(req.params.id);
-    const organizationDetails = organizationId
-      ? await this.organizationsModel.getOrganizationDetails(organizationId)
-      : null;
-    if (!organizationDetails) {
-      return next(this.notFound('Organization Not Found'));
-    }
-    const projects = await this.projectsModel.getProjectsByOrganizationId(organizationId);
-    const title = 'Organization Details';
-    res.render('organization', { title, organizationDetails, projects });
-  };
-}
-
-export { OrganizationsController };
-```
-
-- [ ] **A.6** `src/controllers/projects.js`: replace the **whole file** with:
-
-```js
-import { BaseController } from './baseController.js';
-import { ProjectsModel } from '../models/projects.js';
-import { CategoriesModel } from '../models/categories.js';
-
-const NUMBER_OF_UPCOMING_PROJECTS = 5;
-
-class ProjectsController extends BaseController {
-  constructor({
-    projectsModel = new ProjectsModel(),
-    categoriesModel = new CategoriesModel(),
-  } = {}) {
-    super();
-    this.projectsModel = projectsModel;
-    this.categoriesModel = categoriesModel;
-  }
-
-  showProjectsPage = async (_req, res) => {
-    const projects = await this.projectsModel.getUpcomingProjects(NUMBER_OF_UPCOMING_PROJECTS);
-    const title = 'Upcoming Service Projects';
-    res.render('projects', { title, projects });
-  };
-
-  showProjectDetailsPage = async (req, res, next) => {
-    const projectId = this.parseId(req.params.id);
-    const project = projectId ? await this.projectsModel.getProjectDetails(projectId) : null;
-    if (!project) {
-      return next(this.notFound('Project Not Found'));
-    }
-    const categories = await this.categoriesModel.getCategoriesByProjectId(projectId);
-    const title = project.title;
-    res.render('project', { title, project, categories });
-  };
-}
-
-export { ProjectsController };
-```
-
-- [ ] **A.7** `src/controllers/categories.js`: replace the **whole file** with:
-
-```js
-import { BaseController } from './baseController.js';
-import { CategoriesModel } from '../models/categories.js';
-import { ProjectsModel } from '../models/projects.js';
-
-class CategoriesController extends BaseController {
-  constructor({
-    categoriesModel = new CategoriesModel(),
-    projectsModel = new ProjectsModel(),
-  } = {}) {
-    super();
-    this.categoriesModel = categoriesModel;
-    this.projectsModel = projectsModel;
-  }
-
-  showCategoriesPage = async (_req, res) => {
-    const categories = await this.categoriesModel.getAllCategories();
-    const title = 'Service Project Categories';
-    res.render('categories', { title, categories });
-  };
-
-  showCategoryDetailsPage = async (req, res, next) => {
-    const categoryId = this.parseId(req.params.id);
-    const category = categoryId ? await this.categoriesModel.getCategoryDetails(categoryId) : null;
-    if (!category) {
-      return next(this.notFound('Category Not Found'));
-    }
-    const projects = await this.projectsModel.getProjectsByCategoryId(categoryId);
-    const title = category.name;
-    res.render('category', { title, category, projects });
-  };
-}
-
-export { CategoriesController };
-```
-
-- [ ] **A.8** New file `src/app.js` (everything that was in `server.js`, as a class with one method per setup step,
-      always called in the right order):
-
-```js
-import express from 'express';
-import { fileURLToPath } from 'url';
-import path from 'path';
-import { PgDBConnection } from './models/db.js';
-// Imported for its side effect: registers the project_category join table for provisioning.
-// Every model must be imported before the first query, or provisioning will skip its table.
-import './models/projectCategories.js';
-import { Router } from './routes.js';
-import { HttpError } from './lib/httpError.js';
-
-/** Project root folder (this file is src/app.js). */
-const ROOT = path.dirname(path.dirname(fileURLToPath(import.meta.url)));
-
-/**
- * The web application. Setup always runs in this order:
- * views/static files -> middleware -> routes -> 404 catch-all -> error handler.
- */
-class App {
-  constructor({
-    port = process.env.PORT || 3000,
-    nodeEnv = process.env.NODE_ENV?.toLowerCase() || 'production',
-  } = {}) {
-    this.port = port;
-    this.nodeEnv = nodeEnv;
-    this.server = null;
-    this.app = express();
-    this.configureViews();
-    this.configureMiddleware();
-    this.configureRoutes();
-    this.configureErrorHandling();
-  }
-
-  configureViews() {
-    this.app.use(express.static(path.join(ROOT, 'public')));
-    this.app.set('view engine', 'ejs');
-    this.app.set('views', path.join(ROOT, 'src/views'));
-  }
-
-  configureMiddleware() {
-    // Log every request in development
-    this.app.use((req, _res, next) => {
-      if (this.nodeEnv === 'development') {
-        console.log(`${req.method} ${req.url}`);
-      }
-      next();
-    });
-    // Make NODE_ENV available to all templates
-    this.app.use((_req, res, next) => {
-      res.locals.NODE_ENV = this.nodeEnv;
-      next();
-    });
-  }
-
-  configureRoutes() {
-    this.app.use(new Router());
-    // Health check: 200 once the database is provisioned and reachable, 503 until then.
-    // `version` is the deployed commit, so release.sh can tell when a new version is live.
-    this.app.get('/api/health', async (_req, res) => {
-      const health = await PgDBConnection.healthCheck();
-      res.status(health.status === 'healthy' ? 200 : 503).json(health);
-    });
-  }
-
-  configureErrorHandling() {
-    // Catch-all 404: only reached when no route matched
-    this.app.use((_req, _res, next) => {
-      next(HttpError.notFound());
-    });
-    // Global error handler: four parameters, so Express treats it as the error handler
-    this.app.use((err, _req, res, _next) => {
-      console.error('Error occurred:', err.message);
-      console.error('Stack trace::', err.stack);
-      const status = err.status || 500;
-      const template = status === 404 ? '404' : '500';
-      const context = {
-        title: status === 404 ? 'Page Not Found' : 'Server Error',
-        error: err.message,
-        stack: err.stack,
-      };
-      res.status(status).render(`errors/${template}`, context);
-    });
-  }
-
-  /** Start listening; resolves once the server is up (and the database was checked). */
-  start() {
-    return new Promise((resolve) => {
-      this.server = this.app.listen(this.port, async () => {
-        try {
-          await new PgDBConnection().testConnection();
-          console.log(`Server is running at http://127.0.0.1:${this.port}`);
-          console.log(`Environment: ${this.nodeEnv}`);
-        } catch (error) {
-          console.error('Error connecting to the database:', error);
-        }
-        resolve(this.server);
-      });
-    });
-  }
-
-  /** Stop listening (for tests or a clean shutdown). */
-  async stop() {
-    if (this.server) {
-      await new Promise((resolve) => this.server.close(resolve));
-      this.server = null;
-    }
-  }
-}
-
-export { App };
-```
-
-- [ ] **A.9** `server.js`: replace the **whole file** with:
-
-```js
-import { App } from './src/app.js';
-
-// Entry point: build the application and start listening (setup lives in src/app.js).
-await new App().start();
-```
-
-**Check (Part A):**
-
-- `npm run dev`: `/`, `/organizations`, `/organization/1`, `/projects`, `/project/2`, `/categories`, `/category/1`
-  all look exactly as before.
-- `/nope` → 404 page; `/test-error` → 500 page; `/organization/abc` and `/project/999` → 404 page.
-- `/api/health` → `"status":"healthy"`.
-- `npm run verify`, then `deploy.sh -preview` (all tests), then commit on a branch and `release.sh cse340 <branch>`.
+| What                                                | Where                                           |
+| --------------------------------------------------- | ----------------------------------------------- |
+| App setup                                           | `src/scripts/js/modules/app.mjs`                |
+| Routes                                              | `src/scripts/js/modules/routes.mjs`             |
+| Controllers                                         | `src/scripts/js/modules/controllers/<name>.mjs` |
+| Models                                              | `src/scripts/js/modules/models/<name>.mjs`      |
+| Shared classes (db, base controller, errors, flash) | `src/scripts/js/modules/library/`               |
+| SQL files                                           | `src/scripts/sql/<model>/` (unchanged)          |
+| Views                                               | `src/views/` (unchanged)                        |
 
 ---
 
@@ -380,7 +68,7 @@ Add the line `SESSION_SECRET=<the printed value>` to `.env`.
 
 ## Part 1: Forms, sessions, flash messages (shared plumbing)
 
-- [ ] **1.1** New file `src/middleware/flash.js`:
+- [ ] **1.1** New file `src/scripts/js/modules/library/flash.mjs`:
 
 ```js
 /**
@@ -421,11 +109,11 @@ class FlashMessages {
 export { FlashMessages };
 ```
 
-- [ ] **1.2** `src/app.js`: add these imports with the other imports at the top:
+- [ ] **1.2** `src/scripts/js/modules/app.mjs`: add these imports with the other imports at the top:
 
 ```js
 import session from 'express-session';
-import { FlashMessages } from './middleware/flash.js';
+import { FlashMessages } from './library/flash.mjs';
 ```
 
 and add this at the **end** of the `configureMiddleware()` method (after the `res.locals.NODE_ENV` middleware; routes
@@ -447,7 +135,7 @@ this.app.use(
 this.app.use(FlashMessages.middleware);
 ```
 
-- [ ] **1.3** `src/controllers/baseController.js`: add form-validation support for every controller. Add this import
+- [ ] **1.3** `src/scripts/js/modules/library/baseController.mjs`: add form-validation support for every controller. Add this import
       at the top:
 
 ```js
@@ -560,7 +248,7 @@ WHERE organization_id = $5
 RETURNING organization_id;
 ```
 
-- [ ] **2.3** `src/models/organizations.js`: add **inside the class**, after `getOrganizationDetails(...)`:
+- [ ] **2.3** `src/scripts/js/modules/models/organizations.mjs`: add **inside the class**, after `getOrganizationDetails(...)`:
 
 ```js
   async createOrganization(name, description, contactEmail, logoFilename) {
@@ -585,7 +273,7 @@ RETURNING organization_id;
   }
 ```
 
-- [ ] **2.4** `src/models/organizations.js`: add aliases above the `export` line and replace the `export` line:
+- [ ] **2.4** `src/scripts/js/modules/models/organizations.mjs`: add aliases above the `export` line and replace the `export` line:
 
 ```js
 const createOrganization = (name, description, contactEmail, logoFilename) =>
@@ -608,13 +296,13 @@ export {
 };
 ```
 
-- [ ] **2.5** `src/controllers/organizations.js`: replace the **whole file** with:
+- [ ] **2.5** `src/scripts/js/modules/controllers/organizations.mjs`: replace the **whole file** with:
 
 ```js
 import { body } from 'express-validator';
-import { BaseController } from './baseController.js';
-import { OrganizationsModel } from '../models/organizations.js';
-import { ProjectsModel } from '../models/projects.js';
+import { BaseController } from '../library/baseController.mjs';
+import { OrganizationsModel } from '../models/organizations.mjs';
+import { ProjectsModel } from '../models/projects.mjs';
 
 class OrganizationsController extends BaseController {
   /** Server-side validation for the create and edit organization forms. */
@@ -725,7 +413,7 @@ class OrganizationsController extends BaseController {
 export { OrganizationsController };
 ```
 
-- [ ] **2.6** `src/routes.js` (it already imports `OrganizationsController`): in `initializeRoutes()`, add right after the `/organization/:id` route:
+- [ ] **2.6** `src/scripts/js/modules/routes.mjs` (it already imports `OrganizationsController`): in `initializeRoutes()`, add right after the `/organization/:id` route:
 
 ```js
 this.get('/new-organization', Router.#organizationsController.showNewOrganizationForm);
@@ -860,7 +548,7 @@ WHERE project_id = $6
 RETURNING project_id;
 ```
 
-- [ ] **3.3** `src/models/projects.js`: add **inside the class**, after `getProjectsByCategoryId(...)`:
+- [ ] **3.3** `src/scripts/js/modules/models/projects.mjs`: add **inside the class**, after `getProjectsByCategoryId(...)`:
 
 ```js
   async createProject(title, description, location, date, organizationId) {
@@ -885,7 +573,7 @@ RETURNING project_id;
   }
 ```
 
-- [ ] **3.4** `src/models/projects.js`: add aliases above the `export` block and add the two names to it:
+- [ ] **3.4** `src/scripts/js/modules/models/projects.mjs`: add aliases above the `export` block and add the two names to it:
 
 ```js
 const createProject = (title, description, location, date, organizationId) =>
@@ -909,15 +597,15 @@ export {
 };
 ```
 
-- [ ] **3.5** `src/controllers/projects.js`: replace the **whole file** with (this also contains the Part 4 edit
+- [ ] **3.5** `src/scripts/js/modules/controllers/projects.mjs`: replace the **whole file** with (this also contains the Part 4 edit
       handlers, so Part 4 is mostly routes + view):
 
 ```js
 import { body } from 'express-validator';
-import { BaseController } from './baseController.js';
-import { ProjectsModel } from '../models/projects.js';
-import { CategoriesModel } from '../models/categories.js';
-import { OrganizationsModel } from '../models/organizations.js';
+import { BaseController } from '../library/baseController.mjs';
+import { ProjectsModel } from '../models/projects.mjs';
+import { CategoriesModel } from '../models/categories.mjs';
+import { OrganizationsModel } from '../models/organizations.mjs';
 
 const NUMBER_OF_UPCOMING_PROJECTS = 5;
 
@@ -1052,7 +740,7 @@ class ProjectsController extends BaseController {
 export { ProjectsController };
 ```
 
-- [ ] **3.6** `src/routes.js` (it already imports `ProjectsController`): in `initializeRoutes()`, add right after the `/project/:id` route:
+- [ ] **3.6** `src/scripts/js/modules/routes.mjs` (it already imports `ProjectsController`): in `initializeRoutes()`, add right after the `/project/:id` route:
 
 ```js
 this.get('/new-project', Router.#projectsController.showNewProjectForm);
@@ -1116,7 +804,7 @@ green message; it now appears on `/projects` if it's within the next 5. Submit a
 
 (Model `updateProject` = step 3.2–3.4; controllers `showEditProjectForm` / `processEditProjectForm` = step 3.5.)
 
-- [ ] **4.1** `src/routes.js`: add right after the `/new-project` routes:
+- [ ] **4.1** `src/scripts/js/modules/routes.mjs`: add right after the `/new-project` routes:
 
 ```js
 this.get('/edit-project/:id', Router.#projectsController.showEditProjectForm);
@@ -1197,7 +885,7 @@ INSERT INTO {{schema}}.project_category (project_id, category_id)
 SELECT $1, unnest($2::int[]);
 ```
 
-- [ ] **5.3** `src/models/projectCategories.js`: add **inside the class**, after the constructor:
+- [ ] **5.3** `src/scripts/js/modules/models/projectCategories.mjs`: add **inside the class**, after the constructor:
 
 ```js
   /** Replace a project's categories with exactly the given category ids. */
@@ -1221,15 +909,15 @@ const updateCategoryAssignments = (projectId, categoryIds) =>
 export { ProjectCategoriesModel, updateCategoryAssignments };
 ```
 
-- [ ] **5.4** `src/controllers/categories.js`: replace the **whole file** with (also contains the Part 6 category
+- [ ] **5.4** `src/scripts/js/modules/controllers/categories.mjs`: replace the **whole file** with (also contains the Part 6 category
       create/edit handlers):
 
 ```js
 import { body } from 'express-validator';
-import { BaseController } from './baseController.js';
-import { CategoriesModel } from '../models/categories.js';
-import { ProjectsModel } from '../models/projects.js';
-import { ProjectCategoriesModel } from '../models/projectCategories.js';
+import { BaseController } from '../library/baseController.mjs';
+import { CategoriesModel } from '../models/categories.mjs';
+import { ProjectsModel } from '../models/projects.mjs';
+import { ProjectCategoriesModel } from '../models/projectCategories.mjs';
 
 class CategoriesController extends BaseController {
   /** Server-side validation for the create and edit category forms. */
@@ -1366,7 +1054,7 @@ class CategoriesController extends BaseController {
 export { CategoriesController };
 ```
 
-- [ ] **5.5** `src/routes.js` (it already imports `CategoriesController`): in `initializeRoutes()`, add right after the `/category/:id` route:
+- [ ] **5.5** `src/scripts/js/modules/routes.mjs` (it already imports `CategoriesController`): in `initializeRoutes()`, add right after the `/category/:id` route:
 
 ```js
 this.get('/assign-categories/:projectId', Router.#categoriesController.showAssignCategoriesForm);
@@ -1428,7 +1116,7 @@ WHERE category_id = $2
 RETURNING category_id;
 ```
 
-- [ ] **6.3** `src/models/categories.js`: add **inside the class**, after `getCategoriesByProjectId(...)`:
+- [ ] **6.3** `src/scripts/js/modules/models/categories.mjs`: add **inside the class**, after `getCategoriesByProjectId(...)`:
 
 ```js
   async createCategory(name) {
@@ -1450,7 +1138,7 @@ RETURNING category_id;
   }
 ```
 
-- [ ] **6.4** `src/models/categories.js`: add aliases above the `export` line and replace the `export` line:
+- [ ] **6.4** `src/scripts/js/modules/models/categories.mjs`: add aliases above the `export` line and replace the `export` line:
 
 ```js
 const createCategory = (name) => new CategoriesModel().createCategory(name);
@@ -1466,7 +1154,7 @@ export {
 };
 ```
 
-- [ ] **6.5** `src/routes.js`: add right after the `/assign-categories/:projectId` routes:
+- [ ] **6.5** `src/scripts/js/modules/routes.mjs`: add right after the `/assign-categories/:projectId` routes:
 
 ```js
 this.get('/new-category', Router.#categoriesController.showNewCategoryForm);

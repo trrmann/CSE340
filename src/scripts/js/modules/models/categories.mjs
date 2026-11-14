@@ -1,4 +1,4 @@
-import { PgDBConnection } from './db.js';
+import { PgDBConnection } from '../library/db.mjs';
 
 class CategoriesModel extends PgDBConnection {
   /** Table this model owns, and the tables it references by foreign key (none). */

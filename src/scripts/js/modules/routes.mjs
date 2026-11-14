@@ -1,10 +1,10 @@
 import express from 'express';
 
-import { HomeController } from './controllers/index.js';
-import { OrganizationsController } from './controllers/organizations.js';
-import { ProjectsController } from './controllers/projects.js';
-import { CategoriesController } from './controllers/categories.js';
-import { ErrorController } from './controllers/errors.js';
+import { HomeController } from './controllers/index.mjs';
+import { OrganizationsController } from './controllers/organizations.mjs';
+import { ProjectsController } from './controllers/projects.mjs';
+import { CategoriesController } from './controllers/categories.mjs';
+import { ErrorController } from './controllers/errors.mjs';
 
 class Router extends express.Router {
   static #homeController = new HomeController();

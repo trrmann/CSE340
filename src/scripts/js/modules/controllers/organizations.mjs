@@ -107,6 +107,23 @@ class OrganizationsController extends BaseController {
     req.flash('success', 'Organization updated successfully!');
     res.redirect(`/organization/${organizationId}`);
   };
+
+  processDeleteOrganization = async (req, res) => {
+    if (this.flashErrors(req)) {
+      return res.redirect('/organizations');
+    }
+    const organizationId = this.parseId(req.params.id);
+    const organizationName = await this.organizationsModel
+      .getOrganizationDetails(organizationId)
+      .then((org) => org?.name);
+    if (!organizationId || !organizationName) {
+      req.flash('error', 'Organization not found');
+      return res.redirect('/organizations');
+    }
+    await this.organizationsModel.deleteOrganization(Number(organizationId));
+    req.flash('success', `Organization '${organizationName}' deleted successfully!`);
+    res.redirect(`/organizations`);
+  };
 }
 
 export { OrganizationsController };

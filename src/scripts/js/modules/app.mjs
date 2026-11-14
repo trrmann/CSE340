@@ -1,5 +1,6 @@
 import express from 'express';
 import session from 'express-session';
+import methodOverride from 'method-override';
 import { fileURLToPath } from 'url';
 import path from 'path';
 import { PgDBConnection } from './library/db.mjs';
@@ -64,6 +65,8 @@ class App {
       })
     );
     this.app.use(FlashMessages.middleware);
+    // allow method override for delete methods:  they will be sent as posts bust changed to delete as they will pass the delete as a query argument of _method.
+    this.app.use(methodOverride('_method'));
   }
 
   configureRoutes() {

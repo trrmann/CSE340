@@ -37,6 +37,16 @@ class OrganizationsModel extends PgDBConnection {
     }
     return result.rows[0].organization_id;
   }
+  async deleteOrganization(organizationId) {
+    const result = await this.query({
+      querySQLPath: 'deleteOrganization.sql',
+      params: [organizationId],
+    });
+    if (result.rows.length === 0) {
+      throw new Error('Organization not found');
+    }
+    return result.rows[0].organization_name;
+  }
   async count() {
     return Number(
       (await this.executeQuery({ querySQLPath: 'countOrganization.sql' })).rows[0].count
@@ -91,6 +101,8 @@ const updateOrganization = (organizationId, name, description, contactEmail, log
     contactEmail,
     logoFilename
   );
+const deleteOrganization = (organizationId) =>
+  new OrganizationsModel().deleteOrganization(organizationId);
 
 export {
   OrganizationsModel,
@@ -98,4 +110,5 @@ export {
   getOrganizationDetails,
   createOrganization,
   updateOrganization,
+  deleteOrganization,
 };

@@ -529,9 +529,11 @@ X **Check:**
 
 ---
 
+# added delete organization.
+
 ## Part 3: Create service projects (learning activity: inserting new projects)
 
-- [ ] **3.1** New file `src/scripts/sql/project/insertProject.sql`:
+- [X] **3.1** New file `src/scripts/sql/project/insertProject.sql`:
 
 ```sql
 INSERT INTO {{schema}}.project (title, description, location, project_date, organization_id)
@@ -539,7 +541,7 @@ VALUES ($1, $2, $3, $4, $5)
 RETURNING project_id;
 ```
 
-- [ ] **3.2** New file `src/scripts/sql/project/updateProject.sql` (used in Part 4):
+- [X] **3.2** New file `src/scripts/sql/project/updateProject.sql` (used in Part 4):
 
 ```sql
 UPDATE {{schema}}.project
@@ -548,7 +550,7 @@ WHERE project_id = $6
 RETURNING project_id;
 ```
 
-- [ ] **3.3** `src/scripts/js/modules/models/projects.mjs`: add **inside the class**, after `getProjectsByCategoryId(...)`:
+- [X] **3.3** `src/scripts/js/modules/models/projects.mjs`: add **inside the class**, after `getProjectsByCategoryId(...)`:
 
 ```js
   async createProject(title, description, location, date, organizationId) {
@@ -573,7 +575,7 @@ RETURNING project_id;
   }
 ```
 
-- [ ] **3.4** `src/scripts/js/modules/models/projects.mjs`: add aliases above the `export` block and add the two names to it:
+- [X] **3.4** `src/scripts/js/modules/models/projects.mjs`: add aliases above the `export` block and add the two names to it:
 
 ```js
 const createProject = (title, description, location, date, organizationId) =>
@@ -597,7 +599,7 @@ export {
 };
 ```
 
-- [ ] **3.5** `src/scripts/js/modules/controllers/projects.mjs`: replace the **whole file** with (this also contains the Part 4 edit
+- [X] **3.5** `src/scripts/js/modules/controllers/projects.mjs`: replace the **whole file** with (this also contains the Part 4 edit
       handlers, so Part 4 is mostly routes + view):
 
 ```js
@@ -740,7 +742,7 @@ class ProjectsController extends BaseController {
 export { ProjectsController };
 ```
 
-- [ ] **3.6** `src/scripts/js/modules/routes.mjs` (it already imports `ProjectsController`): in `initializeRoutes()`, add right after the `/project/:id` route:
+- [X] **3.6** `src/scripts/js/modules/routes.mjs` (it already imports `ProjectsController`): in `initializeRoutes()`, add right after the `/project/:id` route:
 
 ```js
 this.get('/new-project', Router.#projectsController.showNewProjectForm);
@@ -751,7 +753,7 @@ this.post(
 );
 ```
 
-- [ ] **3.7** New file `src/views/new-project.ejs`:
+- [X] **3.7** New file `src/views/new-project.ejs`:
 
 ```html
 <%- include('partials/header') %>
@@ -789,16 +791,47 @@ this.post(
 <%- include('partials/footer') %>
 ```
 
-- [ ] **3.8** `src/views/projects.ejs`: add inside the `intro-block` section, after the `<h1>`:
+- [X] **3.8** `src/views/projects.ejs`: add inside the `intro-block` section, after the `<h1>`:
 
 ```html
 <p><a href="/new-project">Add a New Service Project</a></p>
 ```
 
-**Check:** `/projects` → "Add a New Service Project" → create one dated in the future → you land on its page with a
+X **Check:** `/projects` → "Add a New Service Project" → create one dated in the future → you land on its page with a
 green message; it now appears on `/projects` if it's within the next 5. Submit a 2-character title → red error.
-
+# also added delete project
 ---
+# did the delete incorrectly as a get found the following for express + ejs:
+
+npm install method-override
+
+### js
+
+const express = require('express');
+const methodOverride = require('method-override');
+const app = express();
+
+// Look for a '_method' query parameter
+app.use(methodOverride('_method'));
+
+app.delete('/items/:id', async (req, res) => {
+  const { id } = req.params;
+  
+  // Perform deletion logic here
+  // await Item.findByIdAndDelete(id);
+
+  // Standard server-side redirect works here
+  res.redirect('/items');
+});
+
+### in the ejs:  hide the form in the css
+
+<a href="#" onclick="document.getElementById('delete-form-<%= item.id %>').submit(); return false;">
+  Delete Item
+</a>
+
+<form id="delete-form-<%= item.id %>" action="/items/<%= item.id %>?_method=DELETE" method="POST" style="display: none;">
+</form>
 
 ## Part 4: Team Activity: edit service projects
 

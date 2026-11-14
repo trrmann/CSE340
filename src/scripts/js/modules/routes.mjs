@@ -21,6 +21,7 @@ class Router extends express.Router {
     this.get('/', Router.#homeController.showHomePage);
     this.get('/organizations', Router.#organizationsController.showOrganizationsPage);
     this.get('/organization/:id', Router.#organizationsController.showOrganizationDetailsPage);
+    this.delete('/organization/:id', Router.#organizationsController.processDeleteOrganization);
     this.get('/new-organization', Router.#organizationsController.showNewOrganizationForm);
     this.post(
       '/new-organization',
@@ -37,6 +38,13 @@ class Router extends express.Router {
     this.get('/category/:id', Router.#categoriesController.showCategoryDetailsPage);
     this.get('/projects', Router.#projectsController.showProjectsPage);
     this.get('/project/:id', Router.#projectsController.showProjectDetailsPage);
+    this.delete('/project/:id', Router.#projectsController.processDeleteProject);
+    this.get('/new-project', Router.#projectsController.showNewProjectForm);
+    this.post(
+      '/new-project',
+      ProjectsController.validation,
+      Router.#projectsController.processNewProjectForm
+    );
 
     // error handling routes
     this.get('/test-error', Router.#errorController.throwError500);

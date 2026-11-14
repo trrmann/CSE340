@@ -903,14 +903,14 @@ organization → saved, green message, project now shows the new sponsor. `/edit
 
 ## Part 5: Assign categories to a project (learning activity)
 
-- [ ] **5.1** New file `src/scripts/sql/project_category/deleteProjectCategories.sql`:
+- [X] **5.1** New file `src/scripts/sql/project_category/deleteProjectCategories.sql`:
 
 ```sql
 DELETE FROM {{schema}}.project_category
 WHERE project_id = $1;
 ```
 
-- [ ] **5.2** New file `src/scripts/sql/project_category/insertProjectCategories.sql` (inserts every selected
+- [X] **5.2** New file `src/scripts/sql/project_category/insertProjectCategories.sql` (inserts every selected
       category in one statement):
 
 ```sql
@@ -918,7 +918,7 @@ INSERT INTO {{schema}}.project_category (project_id, category_id)
 SELECT $1, unnest($2::int[]);
 ```
 
-- [ ] **5.3** `src/scripts/js/modules/models/projectCategories.mjs`: add **inside the class**, after the constructor:
+- [X] **5.3** `src/scripts/js/modules/models/projectCategories.mjs`: add **inside the class**, after the constructor:
 
 ```js
   /** Replace a project's categories with exactly the given category ids. */
@@ -942,7 +942,7 @@ const updateCategoryAssignments = (projectId, categoryIds) =>
 export { ProjectCategoriesModel, updateCategoryAssignments };
 ```
 
-- [ ] **5.4** `src/scripts/js/modules/controllers/categories.mjs`: replace the **whole file** with (also contains the Part 6 category
+- [X] **5.4** `src/scripts/js/modules/controllers/categories.mjs`: replace the **whole file** with (also contains the Part 6 category
       create/edit handlers):
 
 ```js
@@ -1087,7 +1087,7 @@ class CategoriesController extends BaseController {
 export { CategoriesController };
 ```
 
-- [ ] **5.5** `src/scripts/js/modules/routes.mjs` (it already imports `CategoriesController`): in `initializeRoutes()`, add right after the `/category/:id` route:
+- [X] **5.5** `src/scripts/js/modules/routes.mjs` (it already imports `CategoriesController`): in `initializeRoutes()`, add right after the `/category/:id` route:
 
 ```js
 this.get('/assign-categories/:projectId', Router.#categoriesController.showAssignCategoriesForm);
@@ -1097,7 +1097,7 @@ this.post(
 );
 ```
 
-- [ ] **5.6** New file `src/views/assign-categories.ejs`:
+- [X] **5.6** New file `src/views/assign-categories.ejs`:
 
 ```html
 <%- include('partials/header') %>
@@ -1119,13 +1119,13 @@ this.post(
 <%- include('partials/footer') %>
 ```
 
-- [ ] **5.7** `src/views/project.ejs`: add right after the "Edit Project" link from step 4.3:
+- [X] **5.7** `src/views/project.ejs`: add right after the "Edit Project" link from step 4.3:
 
 ```html
 <p><a href="/assign-categories/<%= project.project_id %>">Update Categories</a></p>
 ```
 
-**Check:** project page → "Update Categories" → current categories are pre-checked → change them → saved, green
+X **Check:** project page → "Update Categories" → current categories are pre-checked → change them → saved, green
 message, the tags on the project page match. Uncheck all → saved with no tags.
 
 ---

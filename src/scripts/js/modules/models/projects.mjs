@@ -31,6 +31,30 @@ class ProjectsModel extends PgDBConnection {
     return (await this.query({ querySQLPath: 'getProjectsByCategoryId.sql', params: [categoryId] }))
       .rows;
   }
+  async createProject(title, description, location, date, organizationId) {
+    const result = await this.query({
+      querySQLPath: 'insertProject.sql',
+      params: [title, description, location, date, organizationId],
+    });
+    if (result.rows.length === 0) {
+      throw new Error('Failed to create project');
+    }
+    return result.rows[0].project_id;
+  }
+  async updateProject(projectId, title, description, location, date, organizationId) {
+    const result = await this.query({
+      querySQLPath: 'updateProject.sql',
+      params: [title, description, location, date, organizationId, projectId],
+    });
+    if (result.rows.length === 0) {
+      throw new Error('Project not found');
+    }
+    return result.rows[0].project_id;
+  }
+  async deleteProject(projectId) {
+    const result = await this.query({ querySQLPath: 'deleteProject.sql', params: [projectId] });
+    return result.rows.length > 0 ? result.rows[0] : null;
+  }
   async count() {
     return Number((await this.executeQuery({ querySQLPath: 'countProject.sql' })).rows[0].count);
   }
@@ -78,6 +102,11 @@ const getUpcomingProjects = (numberOfProjects) =>
 const getProjectDetails = (projectId) => new ProjectsModel().getProjectDetails(projectId);
 const getProjectsByCategoryId = (categoryId) =>
   new ProjectsModel().getProjectsByCategoryId(categoryId);
+const createProject = (title, description, location, date, organizationId) =>
+  new ProjectsModel().createProject(title, description, location, date, organizationId);
+const updateProject = (projectId, title, description, location, date, organizationId) =>
+  new ProjectsModel().updateProject(projectId, title, description, location, date, organizationId);
+const deleteProject = (projectId) => new ProjectsModel().deleteProject(projectId);
 
 export {
   ProjectsModel,
@@ -86,4 +115,7 @@ export {
   getUpcomingProjects,
   getProjectDetails,
   getProjectsByCategoryId,
+  createProject,
+  updateProject,
+  deleteProject,
 };

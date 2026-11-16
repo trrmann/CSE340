@@ -17,3 +17,11 @@
         <li><a href="/projects">Projects</a></li>
       </ul>
     </nav>
+<%_ const messages = flash(); _%> <%_ Object.keys(messages).forEach(type => { _%> <%_ if
+(messages[type].length > 0) { _%>
+<div class="alert <%= type %>">
+  <%_ messages[type].forEach(msg => { _%>
+  <p><%= msg %></p>
+  <%_ }); _%>
+</div>
+<%_ } _%> <%_ }); _%>

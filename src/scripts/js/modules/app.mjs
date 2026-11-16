@@ -1,7 +1,10 @@
 import express from 'express';
+import session from 'express-session';
+import methodOverride from 'method-override';
 import { fileURLToPath } from 'url';
 import path from 'path';
 import { PgDBConnection } from './library/db.mjs';
+import { FlashMessages } from './library/flash.mjs';
 // Imported for its side effect: registers the project_category join table for provisioning.
 // Every model must be imported before the first query, or provisioning will skip its table.
 import './models/projectCategories.mjs';
@@ -49,6 +52,21 @@ class App {
       res.locals.NODE_ENV = this.nodeEnv;
       next();
     });
+    // Read form submissions (POST bodies)
+    this.app.use(express.urlencoded({ extended: true }));
+    this.app.use(express.json());
+    // Sessions (in memory) and flash messages
+    this.app.use(
+      session({
+        secret: process.env.SESSION_SECRET,
+        resave: false,
+        saveUninitialized: true,
+        cookie: { maxAge: 60 * 60 * 1000 }, // 1 hour
+      })
+    );
+    this.app.use(FlashMessages.middleware);
+    // allow method override for delete methods:  they will be sent as posts bust changed to delete as they will pass the delete as a query argument of _method.
+    this.app.use(methodOverride('_method'));
   }
 
   configureRoutes() {

@@ -33,7 +33,7 @@ class PgDBConnection {
   static #provisioning = null;
   /**
    * Models registered for provisioning: { order, ModelClass }. Filled by registerProvisioner,
-   * which each model file calls after its class is defined (db.js never imports the models,
+   * which each model file calls after its class is defined (db.mjs never imports the models,
    * because they extend PgDBConnection and that would be a circular import).
    */
   static #provisioners = [];
@@ -48,10 +48,10 @@ class PgDBConnection {
     // Read-only mode: PostgreSQL itself refuses every write in these sessions.
     ...(PgDBConnection.#readOnly ? { options: '-c default_transaction_read_only=on' } : {}),
   });
-  /** Folder of this file (src/models), built from the module URL so it works under nodemon and on Render. */
+  /** Folder of this file (src/scripts/js/modules/library), from the module URL so it works under nodemon and on Render. */
   static #dirname = path.dirname(fileURLToPath(import.meta.url));
   /** Root folder for all SQL files: src/scripts/sql/. */
-  static #sqlRoot = path.join(PgDBConnection.#dirname, '../scripts/sql');
+  static #sqlRoot = path.resolve(PgDBConnection.#dirname, '../../../sql');
   /**
    * Cache of raw SQL file text, keyed by the file's full resolved path. Shared by all instances.
    * Only the unmodified file text is cached; template replacements ({{schema}} etc.) are applied

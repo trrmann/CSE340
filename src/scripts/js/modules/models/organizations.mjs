@@ -1,4 +1,4 @@
-import { PgDBConnection } from './db.js';
+import { PgDBConnection } from '../library/db.mjs';
 
 class OrganizationsModel extends PgDBConnection {
   /** Table this model owns, and the tables it references by foreign key (none). */
@@ -16,6 +16,36 @@ class OrganizationsModel extends PgDBConnection {
       params: [organizationId],
     });
     return result.rows.length > 0 ? result.rows[0] : null;
+  }
+  async createOrganization(name, description, contactEmail, logoFilename) {
+    const result = await this.query({
+      querySQLPath: 'insertOrganization.sql',
+      params: [name, description, contactEmail, logoFilename],
+    });
+    if (result.rows.length === 0) {
+      throw new Error('Failed to create organization');
+    }
+    return result.rows[0].organization_id;
+  }
+  async updateOrganization(organizationId, name, description, contactEmail, logoFilename) {
+    const result = await this.query({
+      querySQLPath: 'updateOrganization.sql',
+      params: [name, description, contactEmail, logoFilename, organizationId],
+    });
+    if (result.rows.length === 0) {
+      throw new Error('Organization not found');
+    }
+    return result.rows[0].organization_id;
+  }
+  async deleteOrganization(organizationId) {
+    const result = await this.query({
+      querySQLPath: 'deleteOrganization.sql',
+      params: [organizationId],
+    });
+    if (result.rows.length === 0) {
+      throw new Error('Organization not found');
+    }
+    return result.rows[0].organization_name;
   }
   async count() {
     return Number(
@@ -61,5 +91,24 @@ PgDBConnection.registerProvisioner(1, OrganizationsModel);
 const getAllOrganizations = () => new OrganizationsModel().getAllOrganization();
 const getOrganizationDetails = (organizationId) =>
   new OrganizationsModel().getOrganizationDetails(organizationId);
+const createOrganization = (name, description, contactEmail, logoFilename) =>
+  new OrganizationsModel().createOrganization(name, description, contactEmail, logoFilename);
+const updateOrganization = (organizationId, name, description, contactEmail, logoFilename) =>
+  new OrganizationsModel().updateOrganization(
+    organizationId,
+    name,
+    description,
+    contactEmail,
+    logoFilename
+  );
+const deleteOrganization = (organizationId) =>
+  new OrganizationsModel().deleteOrganization(organizationId);
 
-export { OrganizationsModel, getAllOrganizations, getOrganizationDetails };
+export {
+  OrganizationsModel,
+  getAllOrganizations,
+  getOrganizationDetails,
+  createOrganization,
+  updateOrganization,
+  deleteOrganization,
+};

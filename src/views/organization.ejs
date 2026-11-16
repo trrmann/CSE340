@@ -4,6 +4,10 @@
     <h1><%= organizationDetails.name %></h1>
     <img src="/images/<%= organizationDetails.logo_filename %>" alt="<%= organizationDetails.name %> logo" class="card-logo">
     <p><%= organizationDetails.description %></p>
+    <p><a href="/edit-organization/<%= organizationDetails.organization_id %>">Edit Organization</a></p>
+    <p><a href="#" onclick="document.getElementById('delete-form-<%= organizationDetails.organization_id %>').submit(); return false;">Delete Organization</a></p>
+    <form id="delete-form-<%= organizationDetails.organization_id %>" action="/organization/<%= organizationDetails.organization_id %>?_method=DELETE" method="POST" class="hiddenForm">
+    </form>
   </section>
   <section class="projects-column">
     <h2>Service Projects</h2>

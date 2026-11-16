@@ -1,5 +1,5 @@
 {
-  "ext": "js css ejs env sql",
+  "ext": "js mjs css ejs env sql",
   "exec": "node --env-file=.env server.js",
   "ignore": [".git", "node_modules"]
 }

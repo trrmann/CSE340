@@ -6,11 +6,11 @@
  * Usage: node --env-file=.env provisioningScenario.mjs <scenario>
  */
 import pg from 'pg';
-import { PgDBConnection } from '../../../../models/db.js';
-import { OrganizationsModel } from '../../../../models/organizations.js';
-import { ProjectsModel } from '../../../../models/projects.js';
-import { CategoriesModel } from '../../../../models/categories.js';
-import '../../../../models/projectCategories.js';
+import { PgDBConnection } from './../library/db.mjs';
+import { OrganizationsModel } from './../models/organizations.mjs';
+import { ProjectsModel } from './../models/projects.mjs';
+import { CategoriesModel } from './../models/categories.mjs';
+import './../models/projectCategories.mjs';
 
 const TABLES = ['organization', 'project', 'category', 'project_category'];
 const scenario = process.argv[2];

@@ -11,7 +11,7 @@ Do the parts **in order**. After each part, run `npm run dev` and do its **Check
 
 ## Part 0: Shared CSS for links and tags (do first)
 
-- [X] **0.1** `public/css/core.css`: find this rule (from the clickable-card CSS):
+- [x] **0.1** `public/css/core.css`: find this rule (from the clickable-card CSS):
 
 ```css
 .card .contact-link {
@@ -63,7 +63,7 @@ your mail app.
 
 ## Part 1: Organization URL singular (assignment requires `/organization/[id]`)
 
-- [X] **1.1** `src/routes.js`: change
+- [x] **1.1** `src/routes.js`: change
 
 ```js
 this.get('/organizations/:id', Router.#organizationsController.showOrganizationDetailsPage);
@@ -75,7 +75,7 @@ to
 this.get('/organization/:id', Router.#organizationsController.showOrganizationDetailsPage);
 ```
 
-- [X] **1.2** `src/views/organizations.ejs`: in the card link, change `href="/organizations/<%=` to
+- [x] **1.2** `src/views/organizations.ejs`: in the card link, change `href="/organizations/<%=` to
       `href="/organization/<%=` (only that one word changes).
 
 X **Check:** `/organizations` → click a card → URL is `/organization/1` and the page loads.
@@ -84,7 +84,7 @@ X **Check:** `/organizations` → click a card → URL is `/organization/1` and 
 
 ## Part 2: Team Activity: upcoming projects + project details
 
-- [X] **2.1** New file `src/scripts/sql/project/getUpcomingProjects.sql`:
+- [x] **2.1** New file `src/scripts/sql/project/getUpcomingProjects.sql`:
 
 ```sql
 SELECT p.project_id, p.organization_id, p.title, p.description, p.location, p.project_date,
@@ -96,7 +96,7 @@ ORDER BY p.project_date
 LIMIT $1;
 ```
 
-- [X] **2.2** New file `src/scripts/sql/project/getProjectDetails.sql`:
+- [x] **2.2** New file `src/scripts/sql/project/getProjectDetails.sql`:
 
 ```sql
 SELECT p.project_id, p.organization_id, p.title, p.description, p.location, p.project_date,
@@ -106,7 +106,7 @@ JOIN {{schema}}.organization o ON o.organization_id = p.organization_id
 WHERE p.project_id = $1;
 ```
 
-- [X] **2.3** `src/models/projects.js`: add these two methods **inside the class**, right after
+- [x] **2.3** `src/models/projects.js`: add these two methods **inside the class**, right after
       `getProjectsByOrganizationId(...)`:
 
 ```js
@@ -121,7 +121,7 @@ WHERE p.project_id = $1;
   }
 ```
 
-- [X] **2.4** `src/models/projects.js`: at the bottom, add the course-named aliases **above** the `export` line, and
+- [x] **2.4** `src/models/projects.js`: at the bottom, add the course-named aliases **above** the `export` line, and
       replace the `export` line:
 
 ```js
@@ -138,7 +138,7 @@ export {
 };
 ```
 
-- [X] **2.5** `src/controllers/projects.js`: replace the **whole file** with:
+- [x] **2.5** `src/controllers/projects.js`: replace the **whole file** with:
 
 ```js
 import { ProjectsModel } from '../models/projects.js';
@@ -181,13 +181,13 @@ class ProjectsController {
 export { ProjectsController };
 ```
 
-- [X] **2.6** `src/routes.js`: add this line right after the `/projects` route:
+- [x] **2.6** `src/routes.js`: add this line right after the `/projects` route:
 
 ```js
 this.get('/project/:id', Router.#projectsController.showProjectDetailsPage);
 ```
 
-- [X] **2.7** New file `src/views/project.ejs`:
+- [x] **2.7** New file `src/views/project.ejs`:
 
 ```html
 <%- include('partials/header') %>
@@ -213,7 +213,7 @@ this.get('/project/:id', Router.#projectsController.showProjectDetailsPage);
 <%- include('partials/footer') %>
 ```
 
-- [X] **2.8** `src/views/projects.ejs`: replace the `<h3>…</h3>` line inside the card (title + organization) with:
+- [x] **2.8** `src/views/projects.ejs`: replace the `<h3>…</h3>` line inside the card (title + organization) with:
 
 ```html
 <h3>
@@ -230,7 +230,7 @@ this.get('/project/:id', Router.#projectsController.showProjectDetailsPage);
 Also in `projects.ejs`, delete the line `<h2>Upcoming Service Projects</h2>` (the page `<h1>` now says it) and change
 `class="card interactive-card"` to `class="card"`.
 
-- [X] **2.9** `src/views/organization.ejs`: replace the `<h3>…</h3>` line inside the project card with:
+- [x] **2.9** `src/views/organization.ejs`: replace the `<h3>…</h3>` line inside the project card with:
 
 ```html
 <h3>
@@ -247,13 +247,13 @@ X **Check:**
   clicking the organization name opens `/organization/<id>`.
 - `/organization/1` → clicking a project card opens that project.
 - `/project/999` and `/project/abc` show your 404 page.
-- [X] Take the **W03 Team Activity quiz** in Canvas (late is allowed).
+- [x] Take the **W03 Team Activity quiz** in Canvas (late is allowed).
 
 ---
 
 ## Part 3: Assignment: category pages + category tags
 
-- [X] **3.1** New file `src/scripts/sql/category/getCategoryDetails.sql`:
+- [x] **3.1** New file `src/scripts/sql/category/getCategoryDetails.sql`:
 
 ```sql
 SELECT category_id, name
@@ -261,7 +261,7 @@ FROM {{schema}}.category
 WHERE category_id = $1;
 ```
 
-- [X] **3.2** New file `src/scripts/sql/category/getCategoriesByProjectId.sql`:
+- [x] **3.2** New file `src/scripts/sql/category/getCategoriesByProjectId.sql`:
 
 ```sql
 SELECT c.category_id, c.name
@@ -271,7 +271,7 @@ WHERE pc.project_id = $1
 ORDER BY c.name;
 ```
 
-- [X] **3.3** New file `src/scripts/sql/project/getProjectsByCategoryId.sql`:
+- [x] **3.3** New file `src/scripts/sql/project/getProjectsByCategoryId.sql`:
 
 ```sql
 SELECT p.project_id, p.organization_id, p.title, p.description, p.location, p.project_date,
@@ -283,7 +283,7 @@ WHERE pc.category_id = $1
 ORDER BY p.project_date;
 ```
 
-- [X] **3.4** `src/models/categories.js`: add these two methods **inside the class**, right after `getAllCategories()`:
+- [x] **3.4** `src/models/categories.js`: add these two methods **inside the class**, right after `getAllCategories()`:
 
 ```js
   async getCategoryDetails(categoryId) {
@@ -296,7 +296,7 @@ ORDER BY p.project_date;
   }
 ```
 
-- [X] **3.5** `src/models/categories.js`: add aliases above the `export` line and replace the `export` line:
+- [x] **3.5** `src/models/categories.js`: add aliases above the `export` line and replace the `export` line:
 
 ```js
 const getCategoryDetails = (categoryId) => new CategoriesModel().getCategoryDetails(categoryId);
@@ -306,7 +306,7 @@ const getCategoriesByProjectId = (projectId) =>
 export { CategoriesModel, getAllCategories, getCategoryDetails, getCategoriesByProjectId };
 ```
 
-- [X] **3.6** `src/models/projects.js`: add this method **inside the class**, after `getProjectDetails(...)`:
+- [x] **3.6** `src/models/projects.js`: add this method **inside the class**, after `getProjectDetails(...)`:
 
 ```js
   async getProjectsByCategoryId(categoryId) {
@@ -331,7 +331,7 @@ export {
 };
 ```
 
-- [X] **3.7** `src/controllers/categories.js`: replace the **whole file** with:
+- [x] **3.7** `src/controllers/categories.js`: replace the **whole file** with:
 
 ```js
 import { CategoriesModel } from '../models/categories.js';
@@ -368,7 +368,7 @@ class CategoriesController {
 export { CategoriesController };
 ```
 
-- [X] **3.8** `src/controllers/projects.js`: show category tags on the project page.
+- [x] **3.8** `src/controllers/projects.js`: show category tags on the project page.
   1. Add this import under the existing import line:
 
      ```js
@@ -390,13 +390,13 @@ export { CategoriesController };
      res.render('project', { title, project, categories });
      ```
 
-- [X] **3.9** `src/routes.js`: add this line right after the `/categories` route:
+- [x] **3.9** `src/routes.js`: add this line right after the `/categories` route:
 
 ```js
 this.get('/category/:id', Router.#categoriesController.showCategoryDetailsPage);
 ```
 
-- [X] **3.10** New file `src/views/category.ejs`:
+- [x] **3.10** New file `src/views/category.ejs`:
 
 ```html
 <%- include('partials/header') %>
@@ -433,13 +433,13 @@ this.get('/category/:id', Router.#categoriesController.showCategoryDetailsPage);
 <%- include('partials/footer') %>
 ```
 
-- [X] **3.11** `src/views/categories.ejs`: replace the line `<h3><%= category.name %></h3>` with:
+- [x] **3.11** `src/views/categories.ejs`: replace the line `<h3><%= category.name %></h3>` with:
 
 ```html
 <h3><a class="card-link" href="/category/<%= category.category_id %>"><%= category.name %></a></h3>
 ```
 
-- [X] **3.12** `src/views/project.ejs` (from step 2.7): add the tags **inside the card**, right after the
+- [x] **3.12** `src/views/project.ejs` (from step 2.7): add the tags **inside the card**, right after the
       description line `<p><%= project.description %></p>`:
 
 ```html
@@ -465,7 +465,7 @@ X**Check:**
 
 ## Part 4: Test, release, submit
 
-- [X] **4.1** Optional: add the new pages to the preview tests. In
+- [x] **4.1** Optional: add the new pages to the preview tests. In
       `src/scripts/js/modules/tests/previewTestSuite.mjs`, inside `endpoints: [ … ]`, add:
 
 ```js
@@ -474,12 +474,12 @@ X**Check:**
       { path: '/category/1', name: 'Category Details', type: 'page' },
 ```
 
-- [X] **4.2** `npm run verify` passes (format + lint).
-- [X] **4.3** `deploy.sh -preview` passes (preview tests + database tests).
-- [X] **4.4** Commit on a branch, then release.sh cs`e340 <branch>`.
-- [X] **4.5** On the live site, repeat the Part 2 and Part 3 checks.
-- [X] **4.6** Canvas: **W03 Assignment**: submit `https://github.com/trrmann/CSE340` and
+- [x] **4.2** `npm run verify` passes (format + lint).
+- [x] **4.3** `deploy.sh -preview` passes (preview tests + database tests).
+- [x] **4.4** Commit on a branch, then release.sh cs`e340 <branch>`.
+- [x] **4.5** On the live site, repeat the Part 2 and Part 3 checks.
+- [x] **4.6** Canvas: **W03 Assignment**: submit `https://github.com/trrmann/CSE340` and
       `https://cse340-qdjd.onrender.com`.
-- [X] **4.7** Canvas: **W03 Learning Activities quiz** and **W03 Team Activity quiz** (late; no AI).
-- [X] **4.8** **W03 Coaching Session** (models, views, controllers, error handling), then upload the transcript.
-- [X] **4.9** **W03 60-second Status Update**.
+- [x] **4.7** Canvas: **W03 Learning Activities quiz** and **W03 Team Activity quiz** (late; no AI).
+- [x] **4.8** **W03 Coaching Session** (models, views, controllers, error handling), then upload the transcript.
+- [x] **4.9** **W03 60-second Status Update**.

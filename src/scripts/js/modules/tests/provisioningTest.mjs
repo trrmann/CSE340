@@ -87,6 +87,22 @@ export class ProvisioningTest {
       JSON.stringify(r.counts)
     );
 
+    r = this.scenario('removeProjectCascade');
+    this.check('legacy schema: project foreign key changed to no-action', !r.error, r.error || '');
+    r = this.scenario('provision');
+    this.check(
+      'rerun: existing project foreign key is migrated automatically',
+      !r.error && r.rows === EXPECTED.project,
+      r.error || JSON.stringify(r)
+    );
+
+    r = this.scenario('cascadeDelete');
+    this.check(
+      'deleting an organization removes its projects and project-category links',
+      !r.error && r.cascaded,
+      r.error || JSON.stringify(r)
+    );
+
     r = this.scenario('provision');
     this.check(
       'rerun: everything already present',
@@ -100,9 +116,9 @@ export class ProvisioningTest {
       'foreign keys: project->organization, project_category->project and ->category',
       JSON.stringify(r.foreignKeys) ===
         JSON.stringify([
-          'project->organization',
-          'project_category->category',
-          'project_category->project',
+          'project->organization:c',
+          'project_category->category:c',
+          'project_category->project:c',
         ]),
       JSON.stringify(r.foreignKeys)
     );

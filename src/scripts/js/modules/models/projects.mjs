@@ -65,6 +65,9 @@ class ProjectsModel extends PgDBConnection {
     await this.executeQuery({ querySQLPath: 'createProject.sql' });
     return true;
   }
+  async migrate() {
+    await this.executeQuery({ querySQLPath: 'alterProject.sql' });
+  }
   async defaultLoad() {
     await this.executeQuery({ querySQLPath: 'defaultLoadProject.sql' });
     return true;

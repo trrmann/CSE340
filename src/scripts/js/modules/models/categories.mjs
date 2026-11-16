@@ -21,6 +21,34 @@ class CategoriesModel extends PgDBConnection {
     return (await this.query({ querySQLPath: 'getCategoriesByProjectId.sql', params: [projectId] }))
       .rows;
   }
+  async createCategory(name) {
+    const result = await this.query({ querySQLPath: 'insertCategory.sql', params: [name] });
+    if (result.rows.length === 0) {
+      throw new Error('Failed to create category');
+    }
+    return result.rows[0].category_id;
+  }
+  async updateCategory(categoryId, name) {
+    const result = await this.query({
+      querySQLPath: 'updateCategory.sql',
+      params: [name, categoryId],
+    });
+    if (result.rows.length === 0) {
+      throw new Error('Category not found');
+    }
+    return result.rows[0].category_id;
+  }
+  async deleteCategory(categoryId) {
+    const result = await this.query({
+      querySQLPath: 'deleteCategory.sql',
+      params: [categoryId],
+    });
+    if (result.rows.length === 0) {
+      throw new Error('Category not found');
+    }
+    return result.rows[0].category_id;
+  }
+
   async count() {
     return Number((await this.executeQuery({ querySQLPath: 'countCategory.sql' })).rows[0].count);
   }
@@ -64,5 +92,16 @@ const getAllCategories = () => new CategoriesModel().getAllCategories();
 const getCategoryDetails = (categoryId) => new CategoriesModel().getCategoryDetails(categoryId);
 const getCategoriesByProjectId = (projectId) =>
   new CategoriesModel().getCategoriesByProjectId(projectId);
+const createCategory = (name) => new CategoriesModel().createCategory(name);
+const updateCategory = (categoryId, name) => new CategoriesModel().updateCategory(categoryId, name);
+const deleteCategory = (categoryId) => new CategoriesModel().deleteCategory(categoryId);
 
-export { CategoriesModel, getAllCategories, getCategoryDetails, getCategoriesByProjectId };
+export {
+  CategoriesModel,
+  getAllCategories,
+  getCategoryDetails,
+  getCategoriesByProjectId,
+  createCategory,
+  updateCategory,
+  deleteCategory,
+};

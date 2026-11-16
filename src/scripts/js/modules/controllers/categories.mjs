@@ -134,6 +134,27 @@ class CategoriesController extends BaseController {
       res.redirect(`/edit-category/${categoryId}`);
     }
   };
+
+  processDeleteCategory = async (req, res, next) => {
+    const categoryId = this.parseId(req.params.id);
+    if (!categoryId) {
+      return next(this.notFound('Category Not Found'));
+    }
+    const category = await this.categoriesModel.getCategoryDetails(categoryId);
+    if (!category) {
+      return next(this.notFound('Category Not Found'));
+    }
+    const { name } = category;
+    try {
+      await this.categoriesModel.deleteCategory(categoryId);
+      req.flash('success', `Category '${name}' deleted successfully!`);
+      res.redirect('/categories');
+    } catch (error) {
+      console.error('Error deleting category:', error);
+      req.flash('error', 'There was an error deleting the category.');
+      res.redirect(`/category/${categoryId}`);
+    }
+  };
 }
 
 export { CategoriesController };

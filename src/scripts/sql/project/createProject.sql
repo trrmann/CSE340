@@ -1,7 +1,7 @@
 -- Requires: {{schema}}.organization (foreign key target)
 CREATE TABLE IF NOT EXISTS {{schema}}.project (
     project_id SERIAL PRIMARY KEY,
-    organization_id INTEGER NOT NULL REFERENCES {{schema}}.organization(organization_id),
+    organization_id INTEGER NOT NULL REFERENCES {{schema}}.organization(organization_id) ON DELETE CASCADE,
     title VARCHAR(150) NOT NULL,
     description TEXT NOT NULL,
     location VARCHAR(255) NOT NULL,

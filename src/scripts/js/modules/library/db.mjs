@@ -224,7 +224,8 @@ class PgDBConnection {
    *   static tableName = 'organization';      // the table it owns
    *   static requires  = [];                  // tables it references by foreign key (default none)
    * and provide hasTable(), create(), hasData(), defaultLoad() and drop(), each using
-   * executeQuery (never gated) so provisioning never waits on itself.
+   * executeQuery (never gated) so provisioning never waits on itself. Models may also provide
+   * migrate(), which runs after the table is present and before its data is checked.
    *
    * @param {number}   order       provisioning position (1 = first)
    * @param {Function} ModelClass  the model class (a subclass of PgDBConnection)
@@ -317,7 +318,8 @@ class PgDBConnection {
    * - Ensures the current user has USAGE and CREATE on the DB_SCHEMA schema (addUsage / addCreate),
    *   so a freshly re-created database (for example after a Render reset) is set up automatically.
    * - Then, for each registered model in `order` (checked by #orderedProvisioners): creates its table
-   *   if missing (hasTable / create) and loads its default data if the table is empty (hasData / defaultLoad).
+   *   if missing (hasTable / create), runs optional migrations, and loads default data if the table
+   *   is empty (hasData / defaultLoad).
    *   Before creating, every required table must exist; before loading, every required table must have data.
    *   A missing prerequisite throws an error naming it, instead of a foreign-key failure.
    * - The Promise is cached in #provisioning with ??=, so concurrent and later callers all await
@@ -375,6 +377,9 @@ class PgDBConnection {
               }
             }
             await model.create();
+          }
+          if (typeof model.migrate === 'function') {
+            await model.migrate();
           }
           const hadData = await model.hasData();
           if (!hadData) {

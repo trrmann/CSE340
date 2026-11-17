@@ -13,3 +13,7 @@ Tell the user to **return to the hub** (`/usr/local/share/ai-skills`) when the
 next action is task status, due dates, Canvas review, shared standards or
 skills, or work belonging to another project (REL200B, other classes, home or
 personal projects).
+
+Do not perform CSE340 implementation work from the hub. The hub's task store
+tracks CSE340 status and deadlines; this VS Code project owns CSE340 code,
+assignment files, builds, tests, and deployment.

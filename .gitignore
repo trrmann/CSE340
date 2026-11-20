@@ -6,3 +6,6 @@ node_modules/
 .deployment/last-run.log
 
 .claude/settings.local.json
+
+# Personal weekly step-by-step guides (kept local, not in the repo)
+documents/W[0-9][0-9]*_Steps.md

@@ -36,6 +36,27 @@ class Router extends express.Router {
     );
     this.get('/categories', Router.#categoriesController.showCategoriesPage);
     this.get('/category/:id', Router.#categoriesController.showCategoryDetailsPage);
+    this.delete('/category/:id', Router.#categoriesController.processDeleteCategory);
+    this.get(
+      '/assign-categories/:projectId',
+      Router.#categoriesController.showAssignCategoriesForm
+    );
+    this.post(
+      '/assign-categories/:projectId',
+      Router.#categoriesController.processAssignCategoriesForm
+    );
+    this.get('/new-category', Router.#categoriesController.showNewCategoryForm);
+    this.post(
+      '/new-category',
+      CategoriesController.validation,
+      Router.#categoriesController.processNewCategoryForm
+    );
+    this.get('/edit-category/:id', Router.#categoriesController.showEditCategoryForm);
+    this.post(
+      '/edit-category/:id',
+      CategoriesController.validation,
+      Router.#categoriesController.processEditCategoryForm
+    );
     this.get('/projects', Router.#projectsController.showProjectsPage);
     this.get('/project/:id', Router.#projectsController.showProjectDetailsPage);
     this.delete('/project/:id', Router.#projectsController.processDeleteProject);

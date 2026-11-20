@@ -3,6 +3,10 @@
   <section class="intro-block">
     <h1><%= category.name %></h1>
     <p>Service projects in this category.</p>
+    <p><a href="/edit-category/<%= category.category_id %>">Edit Category</a></p>
+    <p><a href="#" onclick="document.getElementById('delete-form-<%= category.category_id %>').submit(); return false;">Delete Category</a></p>
+    <form id="delete-form-<%= category.category_id %>" action="/category/<%= category.category_id %>?_method=DELETE" method="POST" class="hiddenForm">
+    </form>
   </section>
   <section class="projects-column">
     <h2>Service Projects</h2>

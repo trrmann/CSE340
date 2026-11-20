@@ -11,6 +11,16 @@ class ProjectCategoriesModel extends PgDBConnection {
   constructor() {
     super('project_category');
   }
+  /** Replace a project's categories with exactly the given category ids. */
+  async updateCategoryAssignments(projectId, categoryIds) {
+    await this.query({ querySQLPath: 'deleteProjectCategories.sql', params: [projectId] });
+    if (categoryIds.length > 0) {
+      await this.query({
+        querySQLPath: 'insertProjectCategories.sql',
+        params: [projectId, categoryIds],
+      });
+    }
+  }
   async count() {
     return Number(
       (await this.executeQuery({ querySQLPath: 'countProjectCategory.sql' })).rows[0].count
@@ -42,4 +52,7 @@ class ProjectCategoriesModel extends PgDBConnection {
 // Order 4 (last): references project (order 2) and category (order 3).
 PgDBConnection.registerProvisioner(4, ProjectCategoriesModel);
 
-export { ProjectCategoriesModel };
+const updateCategoryAssignments = (projectId, categoryIds) =>
+  new ProjectCategoriesModel().updateCategoryAssignments(projectId, categoryIds);
+
+export { ProjectCategoriesModel, updateCategoryAssignments };

@@ -533,7 +533,7 @@ X **Check:**
 
 ## Part 3: Create service projects (learning activity: inserting new projects)
 
-- [X] **3.1** New file `src/scripts/sql/project/insertProject.sql`:
+- [x] **3.1** New file `src/scripts/sql/project/insertProject.sql`:
 
 ```sql
 INSERT INTO {{schema}}.project (title, description, location, project_date, organization_id)
@@ -541,7 +541,7 @@ VALUES ($1, $2, $3, $4, $5)
 RETURNING project_id;
 ```
 
-- [X] **3.2** New file `src/scripts/sql/project/updateProject.sql` (used in Part 4):
+- [x] **3.2** New file `src/scripts/sql/project/updateProject.sql` (used in Part 4):
 
 ```sql
 UPDATE {{schema}}.project
@@ -550,7 +550,7 @@ WHERE project_id = $6
 RETURNING project_id;
 ```
 
-- [X] **3.3** `src/scripts/js/modules/models/projects.mjs`: add **inside the class**, after `getProjectsByCategoryId(...)`:
+- [x] **3.3** `src/scripts/js/modules/models/projects.mjs`: add **inside the class**, after `getProjectsByCategoryId(...)`:
 
 ```js
   async createProject(title, description, location, date, organizationId) {
@@ -575,7 +575,7 @@ RETURNING project_id;
   }
 ```
 
-- [X] **3.4** `src/scripts/js/modules/models/projects.mjs`: add aliases above the `export` block and add the two names to it:
+- [x] **3.4** `src/scripts/js/modules/models/projects.mjs`: add aliases above the `export` block and add the two names to it:
 
 ```js
 const createProject = (title, description, location, date, organizationId) =>
@@ -599,7 +599,7 @@ export {
 };
 ```
 
-- [X] **3.5** `src/scripts/js/modules/controllers/projects.mjs`: replace the **whole file** with (this also contains the Part 4 edit
+- [x] **3.5** `src/scripts/js/modules/controllers/projects.mjs`: replace the **whole file** with (this also contains the Part 4 edit
       handlers, so Part 4 is mostly routes + view):
 
 ```js
@@ -742,7 +742,7 @@ class ProjectsController extends BaseController {
 export { ProjectsController };
 ```
 
-- [X] **3.6** `src/scripts/js/modules/routes.mjs` (it already imports `ProjectsController`): in `initializeRoutes()`, add right after the `/project/:id` route:
+- [x] **3.6** `src/scripts/js/modules/routes.mjs` (it already imports `ProjectsController`): in `initializeRoutes()`, add right after the `/project/:id` route:
 
 ```js
 this.get('/new-project', Router.#projectsController.showNewProjectForm);
@@ -753,7 +753,7 @@ this.post(
 );
 ```
 
-- [X] **3.7** New file `src/views/new-project.ejs`:
+- [x] **3.7** New file `src/views/new-project.ejs`:
 
 ```html
 <%- include('partials/header') %>
@@ -791,7 +791,7 @@ this.post(
 <%- include('partials/footer') %>
 ```
 
-- [X] **3.8** `src/views/projects.ejs`: add inside the `intro-block` section, after the `<h1>`:
+- [x] **3.8** `src/views/projects.ejs`: add inside the `intro-block` section, after the `<h1>`:
 
 ```html
 <p><a href="/new-project">Add a New Service Project</a></p>
@@ -799,8 +799,11 @@ this.post(
 
 X **Check:** `/projects` → "Add a New Service Project" → create one dated in the future → you land on its page with a
 green message; it now appears on `/projects` if it's within the next 5. Submit a 2-character title → red error.
+
 # also added delete project
+
 ---
+
 # did the delete incorrectly as a get found the following for express + ejs:
 
 npm install method-override
@@ -815,16 +818,16 @@ const app = express();
 app.use(methodOverride('_method'));
 
 app.delete('/items/:id', async (req, res) => {
-  const { id } = req.params;
-  
-  // Perform deletion logic here
-  // await Item.findByIdAndDelete(id);
+const { id } = req.params;
 
-  // Standard server-side redirect works here
-  res.redirect('/items');
+// Perform deletion logic here
+// await Item.findByIdAndDelete(id);
+
+// Standard server-side redirect works here
+res.redirect('/items');
 });
 
-### in the ejs:  hide the form in the css
+### in the ejs: hide the form in the css
 
 <a href="#" onclick="document.getElementById('delete-form-<%= item.id %>').submit(); return false;">
   Delete Item
@@ -903,14 +906,14 @@ organization → saved, green message, project now shows the new sponsor. `/edit
 
 ## Part 5: Assign categories to a project (learning activity)
 
-- [ ] **5.1** New file `src/scripts/sql/project_category/deleteProjectCategories.sql`:
+- [x] **5.1** New file `src/scripts/sql/project_category/deleteProjectCategories.sql`:
 
 ```sql
 DELETE FROM {{schema}}.project_category
 WHERE project_id = $1;
 ```
 
-- [ ] **5.2** New file `src/scripts/sql/project_category/insertProjectCategories.sql` (inserts every selected
+- [x] **5.2** New file `src/scripts/sql/project_category/insertProjectCategories.sql` (inserts every selected
       category in one statement):
 
 ```sql
@@ -918,7 +921,7 @@ INSERT INTO {{schema}}.project_category (project_id, category_id)
 SELECT $1, unnest($2::int[]);
 ```
 
-- [ ] **5.3** `src/scripts/js/modules/models/projectCategories.mjs`: add **inside the class**, after the constructor:
+- [x] **5.3** `src/scripts/js/modules/models/projectCategories.mjs`: add **inside the class**, after the constructor:
 
 ```js
   /** Replace a project's categories with exactly the given category ids. */
@@ -942,7 +945,7 @@ const updateCategoryAssignments = (projectId, categoryIds) =>
 export { ProjectCategoriesModel, updateCategoryAssignments };
 ```
 
-- [ ] **5.4** `src/scripts/js/modules/controllers/categories.mjs`: replace the **whole file** with (also contains the Part 6 category
+- [x] **5.4** `src/scripts/js/modules/controllers/categories.mjs`: replace the **whole file** with (also contains the Part 6 category
       create/edit handlers):
 
 ```js
@@ -1087,7 +1090,7 @@ class CategoriesController extends BaseController {
 export { CategoriesController };
 ```
 
-- [ ] **5.5** `src/scripts/js/modules/routes.mjs` (it already imports `CategoriesController`): in `initializeRoutes()`, add right after the `/category/:id` route:
+- [x] **5.5** `src/scripts/js/modules/routes.mjs` (it already imports `CategoriesController`): in `initializeRoutes()`, add right after the `/category/:id` route:
 
 ```js
 this.get('/assign-categories/:projectId', Router.#categoriesController.showAssignCategoriesForm);
@@ -1097,7 +1100,7 @@ this.post(
 );
 ```
 
-- [ ] **5.6** New file `src/views/assign-categories.ejs`:
+- [x] **5.6** New file `src/views/assign-categories.ejs`:
 
 ```html
 <%- include('partials/header') %>
@@ -1119,20 +1122,20 @@ this.post(
 <%- include('partials/footer') %>
 ```
 
-- [ ] **5.7** `src/views/project.ejs`: add right after the "Edit Project" link from step 4.3:
+- [x] **5.7** `src/views/project.ejs`: add right after the "Edit Project" link from step 4.3:
 
 ```html
 <p><a href="/assign-categories/<%= project.project_id %>">Update Categories</a></p>
 ```
 
-**Check:** project page → "Update Categories" → current categories are pre-checked → change them → saved, green
+X **Check:** project page → "Update Categories" → current categories are pre-checked → change them → saved, green
 message, the tags on the project page match. Uncheck all → saved with no tags.
 
 ---
 
 ## Part 6: Assignment: create + edit categories
 
-- [ ] **6.1** New file `src/scripts/sql/category/insertCategory.sql`:
+- [x] **6.1** New file `src/scripts/sql/category/insertCategory.sql`:
 
 ```sql
 INSERT INTO {{schema}}.category (name)
@@ -1140,7 +1143,7 @@ VALUES ($1)
 RETURNING category_id;
 ```
 
-- [ ] **6.2** New file `src/scripts/sql/category/updateCategory.sql`:
+- [x] **6.2** New file `src/scripts/sql/category/updateCategory.sql`:
 
 ```sql
 UPDATE {{schema}}.category
@@ -1149,7 +1152,7 @@ WHERE category_id = $2
 RETURNING category_id;
 ```
 
-- [ ] **6.3** `src/scripts/js/modules/models/categories.mjs`: add **inside the class**, after `getCategoriesByProjectId(...)`:
+- [x] **6.3** `src/scripts/js/modules/models/categories.mjs`: add **inside the class**, after `getCategoriesByProjectId(...)`:
 
 ```js
   async createCategory(name) {
@@ -1171,7 +1174,7 @@ RETURNING category_id;
   }
 ```
 
-- [ ] **6.4** `src/scripts/js/modules/models/categories.mjs`: add aliases above the `export` line and replace the `export` line:
+- [x] **6.4** `src/scripts/js/modules/models/categories.mjs`: add aliases above the `export` line and replace the `export` line:
 
 ```js
 const createCategory = (name) => new CategoriesModel().createCategory(name);
@@ -1187,7 +1190,7 @@ export {
 };
 ```
 
-- [ ] **6.5** `src/scripts/js/modules/routes.mjs`: add right after the `/assign-categories/:projectId` routes:
+- [x] **6.5** `src/scripts/js/modules/routes.mjs`: add right after the `/assign-categories/:projectId` routes:
 
 ```js
 this.get('/new-category', Router.#categoriesController.showNewCategoryForm);
@@ -1204,7 +1207,7 @@ this.post(
 );
 ```
 
-- [ ] **6.6** New file `src/views/new-category.ejs` (client: `required` + `maxlength="100"`; **no** `minlength`, so the
+- [x] **6.6** New file `src/views/new-category.ejs` (client: `required` + `maxlength="100"`; **no** `minlength`, so the
       server's 3-character minimum can be tested):
 
 ```html
@@ -1222,7 +1225,7 @@ this.post(
 <%- include('partials/footer') %>
 ```
 
-- [ ] **6.7** New file `src/views/edit-category.ejs`:
+- [x] **6.7** New file `src/views/edit-category.ejs`:
 
 ```html
 <%- include('partials/header') %>
@@ -1246,19 +1249,19 @@ this.post(
 <%- include('partials/footer') %>
 ```
 
-- [ ] **6.8** `src/views/categories.ejs`: add inside the `intro-block` section, after the `<p>`:
+- [x] **6.8** `src/views/categories.ejs`: add inside the `intro-block` section, after the `<p>`:
 
 ```html
 <p><a href="/new-category">Add a new category</a></p>
 ```
 
-- [ ] **6.9** `src/views/category.ejs`: add inside the `intro-block` section, after the `<p>`:
+- [x] **6.9** `src/views/category.ejs`: add inside the `intro-block` section, after the `<p>`:
 
 ```html
 <p><a href="/edit-category/<%= category.category_id %>">Edit Category</a></p>
 ```
 
-**Check:**
+X **Check:**
 
 - `/categories` → "Add a new category" → "Food Security" → lands on its page with a green message.
 - Create "ab" (2 characters) → red "between 3 and 100 characters" message (server-side).
@@ -1267,9 +1270,21 @@ this.post(
 
 ---
 
+### item to fix is the delete that causes a foriegn key violation:
+
+update or delete on table "organization" violates foreign key constraint "project_organization_id_fkey" on table "project"
+error: update or delete on table "organization" violates foreign key constraint "project_organization_id_fkey" on table "project"
+at /home/tmann/Documents/Projects/CSE340/node_modules/pg-pool/index.js:45:11
+at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+at async Object.query (file:///home/tmann/Documents/Projects/CSE340/src/scripts/js/modules/library/db.mjs:161:25)
+at async OrganizationsModel.deleteOrganization (file:///home/tmann/Documents/Projects/CSE340/src/scripts/js/modules/models/organizations.mjs:41:20)
+at async processDeleteOrganization (file:///home/tmann/Documents/Projects/CSE340/src/scripts/js/modules/controllers/organizations.mjs:123:5)
+
+### the best solution i can determine at this point is to notify the user at the delete link it will also delete the projects in the organization and then add cascade to the delete, another option would be to catch the error and present and option to cascade and present a list of projects so the user could go in and move any they wish to keep
+
 ## Part 7: Test, release, submit
 
-- [ ] **7.1** Optional: add form pages to `src/scripts/js/modules/tests/previewTestSuite.mjs` `endpoints`:
+- [x] **7.1** Optional: add form pages to `src/scripts/js/modules/tests/previewTestSuite.mjs` `endpoints`:
 
 ```js
       { path: '/new-organization', name: 'New Organization', type: 'page' },

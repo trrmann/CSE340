@@ -201,6 +201,6 @@ a.card-link::after {
   background-color: #d1ecf1;
   border-color: #bee5eb;
 }
-.hiddenForm{
+.hiddenForm {
   display: none;
 }

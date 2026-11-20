@@ -24,6 +24,9 @@ export class PreviewTestSuite {
       { path: '/organization/1', name: 'Organization Details', type: 'page' },
       { path: '/project/2', name: 'Project Details', type: 'page' },
       { path: '/category/1', name: 'Category Details', type: 'page' },
+      { path: '/new-organization', name: 'New Organization', type: 'page' },
+      { path: '/new-project', name: 'New Project', type: 'page' },
+      { path: '/new-category', name: 'New Category', type: 'page' },
     ],
 
     // Lighthouse thresholds

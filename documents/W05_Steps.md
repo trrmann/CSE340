@@ -4,6 +4,9 @@
 **Thu Nov 26, 6:59 PM** (Thanksgiving: plan to finish early) · Assignment, Coaching Session, 60-second Status Update
 **Sat Nov 28, 6:59 PM**.
 
+> **Team meeting: cancelled this week (Thanksgiving).** Do the W05 Team Activity (Part 5) on your own, without the
+> meeting, and take the Team Activity quiz as usual. Team meetings are **back on the normal schedule for W06**.
+
 Follows your structure: SQL in `src/scripts/sql/<table>/`, class methods in the models using
 `this.query({ querySQLPath, params })`, course-named alias exports, controller classes with arrow-function handlers,
 routes in `src/scripts/js/modules/routes.mjs`, views in `src/views/`. Every SQL statement below was run against a
@@ -916,6 +919,8 @@ this.app.use((req, res, next) => {
 ---
 
 ## Part 5: Team Activity: admin role
+
+_No team meeting this week (Thanksgiving): complete this part on your own._
 
 ### 5a. Role in the session
 

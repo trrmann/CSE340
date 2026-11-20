@@ -840,7 +840,7 @@ res.redirect('/items');
 
 (Model `updateProject` = step 3.2–3.4; controllers `showEditProjectForm` / `processEditProjectForm` = step 3.5.)
 
-- [ ] **4.1** `src/scripts/js/modules/routes.mjs`: add right after the `/new-project` routes:
+- [X] **4.1** `src/scripts/js/modules/routes.mjs`: add right after the `/new-project` routes:
 
 ```js
 this.get('/edit-project/:id', Router.#projectsController.showEditProjectForm);
@@ -851,7 +851,7 @@ this.post(
 );
 ```
 
-- [ ] **4.2** New file `src/views/edit-project.ejs` (the date input needs `YYYY-MM-DD`, built from the local date
+- [X] **4.2** New file `src/views/edit-project.ejs` (the date input needs `YYYY-MM-DD`, built from the local date
       parts so the day never shifts):
 
 ```html
@@ -891,16 +891,16 @@ this.post(
 <%- include('partials/footer') %>
 ```
 
-- [ ] **4.3** `src/views/project.ejs`: add inside the `intro-block` section, after the "Sponsored by" paragraph:
+- [X] **4.3** `src/views/project.ejs`: add inside the `intro-block` section, after the "Sponsored by" paragraph:
 
 ```html
 <p><a href="/edit-project/<%= project.project_id %>">Edit Project</a></p>
 ```
 
-**Check:** a project page → "Edit Project" → form pre-filled (date and organization selected) → change the
+X **Check:** a project page → "Edit Project" → form pre-filled (date and organization selected) → change the
 organization → saved, green message, project now shows the new sponsor. `/edit-project/999` → 404.
 
-- [ ] **4.4** Take the **W04 Team Activity quiz** in Canvas.
+- [X] **4.4** Take the **W04 Team Activity quiz** in Canvas.
 
 ---
 

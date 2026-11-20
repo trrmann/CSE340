@@ -66,6 +66,12 @@ class Router extends express.Router {
       ProjectsController.validation,
       Router.#projectsController.processNewProjectForm
     );
+    this.get('/edit-project/:id', Router.#projectsController.showEditProjectForm);
+    this.post(
+      '/edit-project/:id',
+      ProjectsController.validation,
+      Router.#projectsController.processEditProjectForm
+    );
 
     // error handling routes
     this.get('/test-error', Router.#errorController.throwError500);

@@ -18,7 +18,7 @@ exactly the same columns, constraints, indexes and role rows as provisioning: 18
 (Part 2). File names follow the folder = table rule: `src/scripts/sql/roles/createRoles.sql`,
 `src/scripts/sql/users/insertUser.sql`, and so on.
 
-**Before you start:** finish W04 Parts 4–7 (`W04_Steps.md`). Part 5 below protects the W04 routes
+**Before you start:** finish W04 Parts 4–7 (`W04_Steps.md`) and, optionally, the Pre-Week 5 delete improvements below. Part 5 below protects the W04 routes
 (`/edit-project`, `/assign-categories`, `/new-category`, `/edit-category`), so they must exist. Then create a branch for
 this week, for example `git checkout -b w5-auth`.
 
@@ -36,6 +36,255 @@ Do the parts **in order**; after each, run `npm run dev` and do its **Check**.
 | SQL files                                           | `src/scripts/sql/<table>/`                      |
 | Views                                               | `src/views/`                                    |
 | Database tests                                      | `src/scripts/js/modules/tests/`                 |
+
+---
+
+## Pre-Week 5: Delete improvements (from the W04 coaching session)
+
+Optional polish on the W04 delete feature (not graded). Do it **before Part 0** on its own branch, so W05 starts from
+clean delete routes; Part 5 later adds the admin check to these same routes and views. Your design stays the same
+(a POST form with `?_method=DELETE`, turned into a DELETE by `method-override`); these steps improve how it is
+triggered, confirmed and answered.
+
+**Before you start:** main is up to date (PR #8 merged, step guides copied back), then:
+
+```bash
+git checkout main && git pull
+git checkout -b pre-w5-deletes
+```
+
+Do the steps **in order**; P.6 checks everything at the end.
+
+### P-a. Views: a real button inside the form
+
+The anchor + `onclick` needs JavaScript, is announced by screen readers as a link (navigation) instead of an action,
+and is an inline script that a Content-Security-Policy would block. A submit button inside the form has none of these
+problems, and the form no longer needs to be hidden or have an `id`.
+
+- [ ] **P.1** `src/views/organization.ejs`: replace lines 8–10
+
+```ejs
+    <p><a href="#" onclick="document.getElementById('delete-form-<%= organizationDetails.organization_id %>').submit(); return false;">Delete Organization<%= projects.length > 0 ? ' and Sponsored Projects' : '' %></a></p>
+    <form id="delete-form-<%= organizationDetails.organization_id %>" action="/organization/<%= organizationDetails.organization_id %>?_method=DELETE" method="POST" class="hiddenForm">
+    </form>
+```
+
+with
+
+```ejs
+    <form action="/organization/<%= organizationDetails.organization_id %>?_method=DELETE" method="POST" class="delete-form"
+      onsubmit="return confirm('Delete this organization<%= projects.length > 0 ? ' and all of its service projects' : '' %>?');">
+      <button type="submit" class="link-button">Delete Organization<%= projects.length > 0 ? ' and Sponsored Projects' : '' %></button>
+    </form>
+```
+
+The `onsubmit` confirmation matters most here: `ON DELETE CASCADE` (`src/setup.sql` line 37) deletes the
+organization's projects with it. Returning `false` from `onsubmit` (Cancel) stops the submit. The confirmation is
+the only JavaScript left, and if JavaScript is off the button still works, just without the question.
+
+- [ ] **P.2** `src/views/project.ejs`: replace lines 11–13
+
+```ejs
+    <p><a href="#" onclick="document.getElementById('delete-form-<%= project.project_id %>').submit(); return false;">Delete Project</a></p>
+    <form id="delete-form-<%= project.project_id %>" action="/project/<%= project.project_id %>?_method=DELETE" method="POST" class="hiddenForm">
+    </form>
+```
+
+with
+
+```ejs
+    <form action="/project/<%= project.project_id %>?_method=DELETE" method="POST" class="delete-form"
+      onsubmit="return confirm('Delete this service project?');">
+      <button type="submit" class="link-button">Delete Project</button>
+    </form>
+```
+
+- [ ] **P.3** `src/views/category.ejs`: replace lines 7–9
+
+```ejs
+    <p><a href="#" onclick="document.getElementById('delete-form-<%= category.category_id %>').submit(); return false;">Delete Category</a></p>
+    <form id="delete-form-<%= category.category_id %>" action="/category/<%= category.category_id %>?_method=DELETE" method="POST" class="hiddenForm">
+    </form>
+```
+
+with
+
+```ejs
+    <form action="/category/<%= category.category_id %>?_method=DELETE" method="POST" class="delete-form"
+      onsubmit="return confirm('Delete this category? Its service projects are kept; they are only removed from it.');">
+      <button type="submit" class="link-button">Delete Category</button>
+    </form>
+```
+
+(The cascade on `project_category`, `src/setup.sql` lines 78–79, removes only the links, never the projects.)
+
+### P-b. CSS: make the button look like your other links
+
+- [ ] **P.4** `public/css/core.css`: replace the rule at lines 204–206
+
+```css
+.hiddenForm {
+  display: none;
+}
+```
+
+with
+
+```css
+/* Delete forms (P.1-P.3): a form spaced like a <p>, holding a button styled as a link */
+.delete-form {
+  margin: 1em 0;
+}
+
+.link-button {
+  padding: 0;
+  border: 0;
+  background: none;
+  font: inherit;
+  color: LinkText; /* the browser's own link color, the same as your plain <a> links */
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.link-button:hover,
+.link-button:focus-visible {
+  text-decoration-thickness: 2px;
+}
+```
+
+`.delete-form` keeps the same spacing the old `<p>` gave the link. Nothing else uses `.hiddenForm` (search the
+`src/views` folder for it to confirm), so the old rule can go.
+
+### P-c. Controllers: 303 redirects and one consistent delete handler
+
+`303 See Other` tells every client to follow the redirect with a GET. Today the browser really sends a POST, so the
+default `302` works, but a `302` after a real `DELETE` (for example from `fetch()`) can be repeated as a DELETE by
+some clients. `res.redirect(303, url)` puts the status first.
+
+- [ ] **P.5** `src/scripts/js/modules/controllers/organizations.mjs`: replace the **whole**
+      `processDeleteOrganization` (lines 111–126)
+
+```js
+processDeleteOrganization = async (req, res) => {
+  if (this.flashErrors(req)) {
+    return res.redirect('/organizations');
+  }
+  const organizationId = this.parseId(req.params.id);
+  const organizationName = await this.organizationsModel
+    .getOrganizationDetails(organizationId)
+    .then((org) => org?.name);
+  if (!organizationId || !organizationName) {
+    req.flash('error', 'Organization not found');
+    return res.redirect('/organizations');
+  }
+  await this.organizationsModel.deleteOrganization(Number(organizationId));
+  req.flash('success', `Organization '${organizationName}' deleted successfully!`);
+  res.redirect(`/organizations`);
+};
+```
+
+with this version, built the same way as `processDeleteProject` and `processDeleteCategory`:
+
+```js
+processDeleteOrganization = async (req, res, next) => {
+  const organizationId = this.parseId(req.params.id);
+  if (!organizationId) {
+    return next(this.notFound('Organization Not Found'));
+  }
+  const organization = await this.organizationsModel.getOrganizationDetails(organizationId);
+  if (!organization) {
+    return next(this.notFound('Organization Not Found'));
+  }
+  const { name } = organization;
+  try {
+    await this.organizationsModel.deleteOrganization(organizationId);
+    req.flash('success', `Organization '${name}' deleted successfully!`);
+    res.redirect(303, '/organizations');
+  } catch (error) {
+    console.error('Error deleting organization:', error);
+    req.flash('error', 'There was an error deleting the organization.');
+    res.redirect(303, `/organization/${organizationId}`);
+  }
+};
+```
+
+What changed, and why:
+
+| Before                                      | After                                 | Why                                                                 |
+| ------------------------------------------- | ------------------------------------- | ------------------------------------------------------------------- |
+| `flashErrors(req)` check                    | removed                               | the delete route has no validation rules, so it always passed       |
+| looks up the organization, then checks `id` | checks `id` first                     | no database query for an id like `abc`                              |
+| bad id or missing row: flash + redirect     | `next(this.notFound(...))` (404 page) | same behavior as projects and categories; a missing record is a 404 |
+| `Number(organizationId)`                    | `organizationId`                      | `parseId()` already returns a number                                |
+| no `try/catch`                              | `try/catch` with an error flash       | a database error shows a message instead of the 500 page            |
+| `res.redirect(...)`                         | `res.redirect(303, ...)`              | see above                                                           |
+
+`next` is new in the parameter list: the 404 goes to your global error handler the same way `showOrganizationDetailsPage`
+does it (line 51).
+
+- [ ] **P.6** `src/scripts/js/modules/controllers/projects.mjs`, in `processDeleteProject`: line 149
+
+```js
+res.redirect('/projects');
+```
+
+becomes
+
+```js
+res.redirect(303, '/projects');
+```
+
+and line 153
+
+```js
+res.redirect(`/project/${projectId}`);
+```
+
+becomes
+
+```js
+res.redirect(303, `/project/${projectId}`);
+```
+
+- [ ] **P.7** `src/scripts/js/modules/controllers/categories.mjs`, in `processDeleteCategory`: line 151
+      `res.redirect('/categories');` becomes `res.redirect(303, '/categories');`, and line 155
+      ``res.redirect(`/category/${categoryId}`);`` becomes ``res.redirect(303, `/category/${categoryId}`);``.
+
+Only the redirects inside the three **delete** handlers change; create and edit handlers are answering a POST, where
+`302` is fine.
+
+### P-d. Comment typo
+
+- [ ] **P.8** `src/scripts/js/modules/app.mjs` line 68: replace
+
+```js
+// allow method override for delete methods:  they will be sent as posts bust changed to delete as they will pass the delete as a query argument of _method.
+```
+
+with
+
+```js
+// Method override for deletes: HTML forms can only send GET or POST, so delete forms POST with
+// ?_method=DELETE and this middleware changes the method to DELETE before the routes run.
+```
+
+### P-e. Test, merge
+
+- [ ] **P.9** `npm run dev`, then check each of the three delete controls (use a record you added, or re-provision
+      afterwards):
+  - It looks like a link (underlined, link color) and is reached with **Tab**; **Enter** activates it.
+  - **Cancel** in the confirmation: nothing is deleted, you stay on the page.
+  - **OK**: the record is gone and the success flash shows. The organization one also removes its projects; the
+    category one leaves its projects in place.
+  - DevTools → **Network**: the delete request is a `POST` to `…?_method=DELETE` answered with **303**, followed by a
+    `GET` of the list page.
+  - A bad or missing id now gives a 404 instead of a flash: in the DevTools console run
+    `fetch('/organization/999?_method=DELETE', { method: 'POST' }).then((r) => r.status)` → `404`.
+- [ ] **P.10** `npm run verify` (Prettier + ESLint) and `npm run test:db` pass. Commit, push, PR, merge to main, release
+      as usual (`release.sh cse340 pre-w5-deletes`), and check the live site the same way.
+
+**Later, not now:** Part 5 below adds the admin check to these routes and views. A CSRF token on every form that
+changes data (create, edit, delete) is the next protection these forms usually get; it is not part of this course.
 
 ---
 
@@ -1075,23 +1324,28 @@ Wrap each admin link with `<%_ if (user && user.role_name === 'admin') { _%>` �
   <%_ } _%>
 ```
 
-- [ ] **5.5** `src/views/organization.ejs`: wrap the **Edit Organization** link, the **Delete Organization** link and
-      its hidden delete `<form>` (all three) in one block:
+- [ ] **5.5** `src/views/organization.ejs`: wrap the **Edit Organization** link and the delete `<form>` (from
+      Pre-Week 5 P.1) in one block:
 
 ```ejs
     <%_ if (user && user.role_name === 'admin') { _%>
     <p><a href="/edit-organization/<%= organizationDetails.organization_id %>">Edit Organization</a></p>
-    <p><a href="#" onclick="document.getElementById('delete-form-<%= organizationDetails.organization_id %>').submit(); return false;">Delete Organization</a></p>
-    <form id="delete-form-<%= organizationDetails.organization_id %>" action="/organization/<%= organizationDetails.organization_id %>?_method=DELETE" method="POST" class="hiddenForm">
+    <form action="/organization/<%= organizationDetails.organization_id %>?_method=DELETE" method="POST" class="delete-form"
+      onsubmit="return confirm('Delete this organization<%= projects.length > 0 ? ' and all of its service projects' : '' %>?');">
+      <button type="submit" class="link-button">Delete Organization<%= projects.length > 0 ? ' and Sponsored Projects' : '' %></button>
     </form>
     <%_ } _%>
 ```
 
+      If you skipped Pre-Week 5, wrap your existing **Delete Organization** anchor and its hidden form the same way;
+      only the `if` lines are new.
+
 - [ ] **5.6** `src/views/projects.ejs`: wrap `<p><a href="/new-project">Add a New Service Project</a></p>` the same way.
 - [ ] **5.7** `src/views/project.ejs`: wrap **Edit Project** (W04 4.3), **Update Categories** (W04 5.7), **Delete
-      Project** and its hidden form in one block.
+      Project** and its delete form in one block.
 - [ ] **5.8** `src/views/categories.ejs`: wrap **Add a new category** (W04 6.8).
-- [ ] **5.9** `src/views/category.ejs`: wrap **Edit Category** (W04 6.9).
+- [ ] **5.9** `src/views/category.ejs`: wrap **Edit Category** (W04 6.9) and the **Delete Category** form in one
+      block.
 
 ### 5d. The dedicated admin account (grader uses it)
 

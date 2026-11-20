@@ -6,6 +6,7 @@
       Sponsored by
       <a href="/organization/<%= project.organization_id %>"><%= project.organization_name %></a>
     </p>
+    <p><a href="/edit-project/<%= project.project_id %>">Edit Project</a></p>
     <p><a href="#" onclick="document.getElementById('delete-form-<%= project.project_id %>').submit(); return false;">Delete Project</a></p>
     <form id="delete-form-<%= project.project_id %>" action="/project/<%= project.project_id %>?_method=DELETE" method="POST" class="hiddenForm">
     </form>
